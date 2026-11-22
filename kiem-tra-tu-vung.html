@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <title>Kiểm tra Từ vựng Tiếng Anh (A1 – C1)</title>
+  <style>
+    /* =========================================================
+       1. GIAO DIỆN & BIẾN MÀU (HỖ TRỢ SÁNG / TỐI TỰ ĐỘNG)
+       ========================================================= */
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --text: #111827;
+      --text-muted: #526071;
+      --border: #e2e8f0;
+      --shadow: 0 6px 24px rgba(15, 23, 42, 0.07);
+      --radius: 18px;
+      --radius-sm: 12px;
+
+      /* Màu nhấn mặc định (thay đổi theo từng trình độ) */
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.12);
+      --accent-text: #ffffff;
+
+      /* Màu trạng thái phản hồi */
+      --correct: #15803d;
+      --correct-bg: #ecfdf5;
+      --correct-border: #86efac;
+
+      --almost: #c2410c;
+      --almost-bg: #fff7ed;
+      --almost-border: #fdba74;
+
+      --wrong: #b91c1c;
+      --wrong-bg: #fef2f2;
+      --wrong-border: #fca5a5;
+
+      /* Màu riêng cho 5 trình độ CEFR */
+      --c-a1: #16a34a;
+      --c-a2: #2563eb;
+      --c-b1: #ca8a04;
+      --c-b2: #ea580c;
+      --c-c1: #7c3aed;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #151e31;
+        --surface-alt: #1c273e;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border: #293548;
+        --shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
+
+        --correct: #4ade80;
+        --correct-bg: rgba(22, 163, 74, 0.16);
+        --correct-border: rgba(74, 222, 128, 0.4);
+
+        --almost: #fb923c;
+        --almost-bg: rgba(234, 88, 12, 0.18);
+        --almost-border: rgba(251, 146, 60, 0.45);
+
+        --wrong: #f87171;
+        --wrong-bg: rgba(220, 38, 38, 0.18);
+        --wrong-border: rgba(248, 113, 113, 0.45);
+
+        --c-a1: #22c55e;
+        --c-a2: #3b82f6;
+        --c-b1: #eab308;
+        --c-b2: #f97316;
+        --c-c1: #a855f7;
+      }
+    }
+
+    /* Đổi màu nhấn toàn ứng dụng theo trình độ đang chọn */
+    body[data-level="A1"] { --accent: var(--c-a1); --accent-soft: rgba(22, 163, 74, 0.14); }
+    body[data-level="A2"] { --accent: var(--c-a2); --accent-soft: rgba(37, 99, 235, 0.14); }
+    body[data-level="B1"] { --accent: var(--c-b1); --accent-soft: rgba(202, 138, 4, 0.16); }
+    body[data-level="B2"] { --accent: var(--c-b2); --accent-soft: rgba(234, 88, 12, 0.15); }
+    body[data-level="C1"] { --accent: var(--c-c1); --accent-soft: rgba(124, 58, 237, 0.15); }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 14px 16px 28px;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      animation: fadeSlideIn 0.25s ease-out;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .shake {
+      animation: shake 0.35s ease;
+    }
+
+    /* =========================================================
+       2. MÀN HÌNH CHỌN TRÌNH ĐỘ (HOME)
+       ========================================================= */
+    .home-header {
+      text-align: center;
+      padding: 12px 0 20px;
+    }
+
+    .home-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+    }
+
+    .home-header h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .home-header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .level-btn {
+      width: 100%;
+      min-height: 74px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      transition: transform 0.14s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+      font-family: inherit;
+    }
+
+    .level-btn:hover {
+      border-color: var(--lvl-color);
+      transform: translateY(-1px);
+    }
+
+    .level-btn:active {
+      transform: scale(0.985);
+    }
+
+    .level-pill {
+      flex-shrink: 0;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: var(--lvl-color);
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .level-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .level-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .level-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .best-tag {
+      font-weight: 600;
+      color: var(--lvl-color);
+    }
+
+    .level-arrow {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       3. MÀN HÌNH LÀM BÀI (QUIZ)
+       ========================================================= */
+    .quiz-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .icon-btn {
+      min-width: 48px;
+      min-height: 48px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    .quiz-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .badge-level {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .badge-score {
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-color: transparent;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .word-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 18px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      transition: border-color 0.2s ease;
+    }
+
+    .word-prompt-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .word-display {
+      font-size: clamp(2rem, 8.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 12px;
+      word-break: break-word;
+    }
+
+    .speak-btn {
+      min-height: 48px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+    }
+
+    .speak-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .speak-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Khu vực nhập nghĩa - gọn gàng để luôn thấy khi mở bàn phím điện thoại */
+    .answer-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .answer-input {
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 16px;
+      font-size: 1.05rem; /* >= 16px tránh tự zoom trên iOS */
+      font-family: inherit;
+      color: var(--text);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .answer-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .answer-input:disabled {
+      opacity: 0.72;
+      background: var(--surface-alt);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 50px;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.12s ease, opacity 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.975);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-alt);
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    /* =========================================================
+       4. THẺ PHẢN HỒI & GIẢI THÍCH CHI TIẾT
+       ========================================================= */
+    .feedback-card {
+      display: none;
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 2px solid var(--border);
+      margin-bottom: 14px;
+      animation: fadeSlideIn 0.22s ease-out;
+    }
+
+    .feedback-card.show {
+      display: block;
+    }
+
+    .feedback-card.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct-border);
+    }
+
+    .feedback-card.almost {
+      background: var(--almost-bg);
+      border-color: var(--almost-border);
+    }
+
+    .feedback-card.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong-border);
+    }
+
+    .feedback-status {
+      font-size: 1.12rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .feedback-card.correct .feedback-status { color: var(--correct); }
+    .feedback-card.almost .feedback-status { color: var(--almost); }
+    .feedback-card.wrong .feedback-status { color: var(--wrong); }
+
+    .feedback-word-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .feedback-word-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .ipa-text {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    .pos-group {
+      margin-bottom: 10px;
+    }
+
+    .pos-item {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .pos-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      margin-right: 6px;
+    }
+
+    .example-box {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 0.92rem;
+      border: 1px solid var(--border);
+    }
+
+    .example-en {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .example-vi {
+      color: var(--text-muted);
+    }
+
+    .related-box {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .related-box strong {
+      color: var(--text);
+    }
+
+    .next-wrap {
+      display: none;
+      margin-top: 4px;
+    }
+
+    .next-wrap.show {
+      display: block;
+    }
+
+    /* =========================================================
+       5. MÀN HÌNH KẾT QUẢ (RESULT)
+       ========================================================= */
+    .result-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 18px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .result-score {
+      font-size: clamp(2.4rem, 10vw, 3.2rem);
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1.1;
+      margin: 6px 0;
+    }
+
+    .record-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .stat-box {
+      padding: 12px 8px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+    }
+
+    .stat-num {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .stat-correct .stat-num { color: var(--correct); }
+    .stat-almost .stat-num { color: var(--almost); }
+    .stat-wrong .stat-num { color: var(--wrong); }
+
+    .result-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .review-section h2 {
+      font-size: 1.05rem;
+      margin: 0 0 10px;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .review-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--wrong);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .review-item.almost {
+      border-left-color: var(--almost);
+    }
+
+    .review-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .review-word {
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .mini-speak {
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .review-meaning {
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .review-user-ans {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast thông báo nhẹ (không dùng alert) */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 420px) {
+      .btn-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  
+    /* =========================================================
+       6. CHẾ ĐỘ VÔ HẠN & NẠP TỪ TRỰC TUYẾN
+       ========================================================= */
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 5px;
+      margin: 0 0 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .mode-btn {
+      min-height: 48px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .home-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 12px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .toggle-pill input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .small-action-btn {
+      min-height: 44px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .small-action-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .level-card-wrap {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .level-card-wrap .level-btn {
+      flex: 1;
+    }
+
+    .level-fetch-btn {
+      flex-shrink: 0;
+      min-width: 52px;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 8px;
+      box-shadow: var(--shadow);
+      transition: border-color 0.16s ease, transform 0.12s ease;
+    }
+
+    .level-fetch-btn span.lbl {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .level-fetch-btn:hover:not(:disabled) {
+      border-color: var(--lvl-color);
+    }
+
+    .level-fetch-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .finish-early-btn {
+      min-height: 40px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sync-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin: -8px 0 10px;
+      min-height: 18px;
+    }
+
+    .word-source-tag {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--accent-soft);
+      color: var(--accent);
+      vertical-align: middle;
+    }
+
+    /* Modal thêm từ mới thủ công */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 460px;
+      max-height: 90dvh;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .field-group label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .field-input {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.96rem;
+    }
+
+  </style>
+</head>
+<body data-level="A2">
+  <div class="app-container">
+
+    <!-- ==================== MÀN HÌNH 1: CHỌN TRÌNH ĐỘ ==================== -->
+    <section id="screen-home" class="screen active" aria-label="Chọn trình độ">
+      <header class="home-header">
+        <div class="home-badge">CEFR A1 – C1 • Vô hạn ∞</div>
+        <h1>Kiểm tra Từ vựng Tiếng Anh</h1>
+        <p id="home-subtitle">Chọn trình độ để học không giới hạn — tự động nạp thêm từ mới</p>
+      </header>
+
+      <div class="mode-switch" role="tablist" aria-label="Chế độ chơi">
+        <button id="mode-infinite" class="mode-btn active" type="button" role="tab" aria-selected="true">∞ Vô hạn (Không hết từ)</button>
+        <button id="mode-10" class="mode-btn" type="button" role="tab" aria-selected="false">🎯 Lượt 10 từ chuẩn</button>
+      </div>
+
+      <div class="home-tools">
+        <label class="toggle-pill" title="Tự động tải thêm từ tiếng Anh mới theo trình độ CEFR khi có mạng">
+          <input id="chk-auto-online" type="checkbox" checked>
+          <span>Tự động nạp từ mới 🌐</span>
+        </label>
+        <button id="btn-open-add-word" class="small-action-btn" type="button">＋ Thêm từ riêng</button>
+      </div>
+
+      <div id="level-grid" class="level-grid"></div>
+    </section>
+
+    <!-- ==================== MÀN HÌNH 2: LÀM BÀI KIỂM TRA ==================== -->
+    <section id="screen-quiz" class="screen" aria-label="Làm bài kiểm tra">
+      <div class="quiz-topbar">
+        <button id="btn-back-home" class="icon-btn" type="button" aria-label="Quay lại chọn trình độ">←</button>
+        <div class="quiz-badges">
+          <span id="quiz-level-badge" class="badge badge-level">A1</span>
+          <span id="quiz-progress-text" class="badge">1/10</span>
+          <span id="quiz-score-text" class="badge badge-score">Điểm: 0</span>
+          <button id="btn-finish-infinite" class="finish-early-btn" type="button" style="display:none;">Kết thúc</button>
+        </div>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <div id="sync-status" class="sync-status" aria-live="polite"></div>
+
+      <div id="word-card" class="word-card">
+        <div class="word-prompt-label">Nghĩa tiếng Việt của từ này là gì?</div>
+        <div id="word-display" class="word-display">apple</div>
+        <button id="btn-speak" class="speak-btn" type="button" aria-label="Phát âm từ tiếng Anh">
+          <span>🔊</span><span>Nghe phát âm</span>
+        </button>
+      </div>
+
+      <form id="answer-form" class="answer-form" autocomplete="off">
+        <input
+          id="answer-input"
+          class="answer-input"
+          type="text"
+          placeholder="Nhập nghĩa tiếng Việt (VD: quả táo)..."
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="off"
+          spellcheck="false"
+          enterkeyhint="done"
+        >
+        <div class="btn-row">
+          <button id="btn-check" class="btn btn-primary" type="submit">Kiểm tra</button>
+          <button id="btn-skip" class="btn btn-secondary" type="button">Bỏ qua / Không biết</button>
+        </div>
+      </form>
+
+      <div id="feedback-card" class="feedback-card" role="status" aria-live="polite"></div>
+
+      <div id="next-wrap" class="next-wrap">
+        <button id="btn-next" class="btn btn-primary btn-full" type="button">Câu tiếp theo →</button>
+      </div>
+    </section>
+
+    <!-- ==================== MÀN HÌNH 3: KẾT QUẢ ==================== -->
+    <section id="screen-result" class="screen" aria-label="Kết quả kiểm tra">
+      <div class="result-hero">
+        <div id="result-subtitle" class="word-prompt-label">Hoàn thành lượt kiểm tra A1</div>
+        <div id="result-score" class="result-score">0 / 10</div>
+        <div id="result-record" class="record-badge" style="display:none;"></div>
+
+        <div class="stats-grid">
+          <div class="stat-box stat-correct">
+            <div id="stat-correct" class="stat-num">0</div>
+            <div class="stat-label">Đúng</div>
+          </div>
+          <div class="stat-box stat-almost">
+            <div id="stat-almost" class="stat-num">0</div>
+            <div class="stat-label">Gần đúng</div>
+          </div>
+          <div class="stat-box stat-wrong">
+            <div id="stat-wrong" class="stat-num">0</div>
+            <div class="stat-label">Sai</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-review-wrong" class="btn btn-primary btn-full" type="button" style="display:none;">
+          Ôn lại các từ sai
+        </button>
+        <button id="btn-retry" class="btn btn-secondary btn-full" type="button">Làm lại lượt mới</button>
+        <button id="btn-choose-level" class="btn btn-secondary btn-full" type="button">Chọn trình độ khác</button>
+      </div>
+
+      <div id="review-section" class="review-section">
+        <h2 id="review-heading">Danh sách từ cần ôn lại</h2>
+        <div id="review-list" class="review-list"></div>
+      </div>
+    </section>
+
+  </div>
+
+  
+  <!-- Modal thêm từ vựng cá nhân -->
+  <div id="add-word-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h3 id="modal-title">Thêm từ mới vào kho</h3>
+        <button id="btn-close-modal" class="icon-btn" type="button" aria-label="Đóng">✕</button>
+      </div>
+      <form id="add-word-form">
+        <div class="field-group">
+          <label for="aw-level">Trình độ CEFR</label>
+          <select id="aw-level" class="field-input">
+            <option value="A1">A1 – Sơ cấp</option>
+            <option value="A2">A2 – Cơ bản</option>
+            <option value="B1">B1 – Trung cấp</option>
+            <option value="B2">B2 – Trung cao cấp</option>
+            <option value="C1">C1 – Cao cấp</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="aw-word">Từ tiếng Anh *</label>
+          <input id="aw-word" class="field-input" type="text" required placeholder="VD: resilient" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="field-group">
+          <label for="aw-meanings">Nghĩa tiếng Việt (ngăn cách bằng dấu phẩy) *</label>
+          <input id="aw-meanings" class="field-input" type="text" required placeholder="VD: kiên cường, bền bỉ, dẻo dai">
+        </div>
+        <div class="field-group">
+          <label for="aw-type">Từ loại</label>
+          <input id="aw-type" class="field-input" type="text" value="n" placeholder="n, v, adj, adv">
+        </div>
+        <div class="field-group">
+          <label for="aw-ipa">Phiên âm IPA (tùy chọn)</label>
+          <input id="aw-ipa" class="field-input" type="text" placeholder="VD: /rɪˈzɪl.jənt/">
+        </div>
+        <div class="field-group">
+          <label for="aw-example">Câu ví dụ tiếng Anh (tùy chọn)</label>
+          <input id="aw-example" class="field-input" type="text" placeholder="VD: She is very resilient.">
+        </div>
+        <div class="field-group">
+          <label for="aw-example-vi">Bản dịch ví dụ (tùy chọn)</label>
+          <input id="aw-example-vi" class="field-input" type="text" placeholder="VD: Cô ấy rất kiên cường.">
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">Lưu vào kho từ</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="alert"></div>
+
+  <script>
+    /* =====================================================================
+       PHẦN 1: KHO TỪ VỰNG CHUẨN CEFR (A1 – C1, MỖI TRÌNH ĐỘ 42 TỪ = 210 TỪ)
+       ---------------------------------------------------------------------
+       Cách thêm từ mới rất đơn giản: chỉ cần thêm một đối tượng vào mảng
+       A1, A2, B1, B2 hoặc C1 theo mẫu:
+       {
+         word: "từ tiếng Anh",
+         ipa: "/phiên âm/",
+         type: "n" | "v" | "adj" | "adv" | "n, v" ...,
+         meanings: ["nghĩa chính", "nghĩa đồng nghĩa 1", "nghĩa đồng nghĩa 2"],
+         meaningsByType: { n: ["nghĩa danh từ"], v: ["nghĩa động từ"] }, // tùy chọn nếu có nhiều từ loại
+         example: "Câu ví dụ tiếng Anh.",
+         exampleVi: "Bản dịch tiếng Việt.",
+         related: "từ liên quan (nếu có)"
+       }
+       ===================================================================== */
+    const VOCAB_BANK = {
+      A1: [
+        { word: "apple", ipa: "/ˈæp.əl/", type: "n", meanings: ["quả táo", "trái táo", "táo"], example: "I eat an apple every morning.", exampleVi: "Tôi ăn một quả táo mỗi sáng.", related: "apple juice (n)" },
+        { word: "house", ipa: "/haʊs/", type: "n", meanings: ["ngôi nhà", "nhà", "căn nhà"], example: "They live in a small house near the river.", exampleVi: "Họ sống trong một ngôi nhà nhỏ gần sông.", related: "household (n), housework (n)" },
+        { word: "friend", ipa: "/frend/", type: "n", meanings: ["bạn", "bạn bè", "người bạn"], example: "Minh is my best friend at school.", exampleVi: "Minh là người bạn thân nhất của tôi ở trường.", related: "friendly (adj), friendship (n)" },
+        { word: "happy", ipa: "/ˈhæp.i/", type: "adj", meanings: ["vui", "vui vẻ", "hạnh phúc", "sung sướng", "vui mừng"], example: "She feels very happy today.", exampleVi: "Hôm nay cô ấy cảm thấy rất vui vẻ.", related: "happiness (n), happily (adv), unhappy (adj)" },
+        { word: "water", ipa: "/ˈwɔː.tər/", type: "n, v", meaningsByType: { n: ["nước", "nước uống"], v: ["tưới nước", "tưới cây", "tưới"] }, meanings: ["nước", "nước uống", "tưới nước", "tưới cây", "tưới"], example: "Please drink plenty of water.", exampleVi: "Xin hãy uống nhiều nước.", related: "watery (adj), waterproof (adj)" },
+        { word: "book", ipa: "/bʊk/", type: "n, v", meaningsByType: { n: ["sách", "quyển sách", "cuốn sách"], v: ["đặt chỗ", "đặt trước", "đặt vé", "đặt phòng"] }, meanings: ["sách", "quyển sách", "cuốn sách", "đặt chỗ", "đặt trước", "đặt vé", "đặt phòng"], example: "This book is very interesting.", exampleVi: "Cuốn sách này rất thú vị.", related: "booking (n), bookstore (n)" },
+        { word: "family", ipa: "/ˈfæm.əl.i/", type: "n", meanings: ["gia đình", "nhà"], example: "My family eats dinner together at seven.", exampleVi: "Gia đình tôi ăn tối cùng nhau lúc 7 giờ.", related: "familiar (adj)" },
+        { word: "school", ipa: "/skuːl/", type: "n", meanings: ["trường", "trường học", "ngôi trường"], example: "The children walk to school every day.", exampleVi: "Lũ trẻ đi bộ đến trường mỗi ngày.", related: "schoolmate (n), schooling (n)" },
+        { word: "teacher", ipa: "/ˈtiː.tʃər/", type: "n", meanings: ["giáo viên", "thầy giáo", "cô giáo", "nhà giáo"], example: "Our English teacher is very kind.", exampleVi: "Giáo viên tiếng Anh của chúng tôi rất tốt bụng.", related: "teach (v), teaching (n)" },
+        { word: "student", ipa: "/ˈstjuː.dənt/", type: "n", meanings: ["học sinh", "sinh viên", "học viên"], example: "He is a university student in Hue.", exampleVi: "Anh ấy là sinh viên đại học ở Huế.", related: "study (v, n)" },
+        { word: "food", ipa: "/fuːd/", type: "n", meanings: ["thức ăn", "đồ ăn", "thực phẩm", "món ăn"], example: "Vietnamese food is delicious and healthy.", exampleVi: "Đồ ăn Việt Nam vừa ngon vừa tốt cho sức khỏe.", related: "seafood (n), fast food (n)" },
+        { word: "money", ipa: "/ˈmʌn.i/", type: "n", meanings: ["tiền", "tiền bạc"], example: "I need to save money for a new bike.", exampleVi: "Tôi cần tiết kiệm tiền để mua một chiếc xe đạp mới.", related: "monetary (adj)" },
+        { word: "time", ipa: "/taɪm/", type: "n", meanings: ["thời gian", "giờ", "thời giờ", "lần"], example: "What time does the bus leave?", exampleVi: "Xe buýt rời bến lúc mấy giờ?", related: "timely (adj), timetable (n)" },
+        { word: "work", ipa: "/wɜːrk/", type: "v, n", meaningsByType: { v: ["làm việc", "hoạt động"], n: ["công việc", "việc làm", "tác phẩm"] }, meanings: ["làm việc", "hoạt động", "công việc", "việc làm", "tác phẩm"], example: "My father goes to work at 8 a.m.", exampleVi: "Bố tôi đi làm lúc 8 giờ sáng.", related: "worker (n), workplace (n)" },
+        { word: "sleep", ipa: "/sliːp/", type: "v, n", meaningsByType: { v: ["ngủ", "đi ngủ"], n: ["giấc ngủ"] }, meanings: ["ngủ", "đi ngủ", "giấc ngủ"], example: "You should sleep eight hours a night.", exampleVi: "Bạn nên ngủ tám tiếng mỗi đêm.", related: "sleepy (adj), asleep (adj)" },
+        { word: "eat", ipa: "/iːt/", type: "v", meanings: ["ăn", "dùng bữa"], example: "We usually eat rice and vegetables.", exampleVi: "Chúng tôi thường ăn cơm và rau.", related: "eater (n), edible (adj)" },
+        { word: "drink", ipa: "/drɪŋk/", type: "v, n", meaningsByType: { v: ["uống"], n: ["đồ uống", "thức uống", "nước uống"] }, meanings: ["uống", "đồ uống", "thức uống", "nước uống"], example: "Do you want to drink some tea?", exampleVi: "Bạn có muốn uống một ít trà không?", related: "drinkable (adj)" },
+        { word: "read", ipa: "/riːd/", type: "v", meanings: ["đọc", "đọc sách"], example: "I like to read before bed.", exampleVi: "Tôi thích đọc sách trước khi đi ngủ.", related: "reader (n), reading (n)" },
+        { word: "write", ipa: "/raɪt/", type: "v", meanings: ["viết", "ghi", "soạn"], example: "Please write your name on the paper.", exampleVi: "Xin hãy viết tên của bạn lên giấy.", related: "writer (n), writing (n)" },
+        { word: "speak", ipa: "/spiːk/", type: "v", meanings: ["nói", "nói chuyện", "phát biểu"], example: "Can you speak English slowly?", exampleVi: "Bạn có thể nói tiếng Anh chậm lại không?", related: "speaker (n), speech (n)" },
+        { word: "listen", ipa: "/ˈlɪs.ən/", type: "v", meanings: ["nghe", "lắng nghe"], example: "Listen carefully to the instructions.", exampleVi: "Hãy lắng nghe kỹ các hướng dẫn.", related: "listener (n)" },
+        { word: "big", ipa: "/bɪɡ/", type: "adj", meanings: ["to", "lớn", "rộng lớn", "to lớn"], example: "They have a big garden behind the house.", exampleVi: "Họ có một khu vườn lớn phía sau nhà.", related: "bigger (adj), biggest (adj)" },
+        { word: "small", ipa: "/smɔːl/", type: "adj", meanings: ["nhỏ", "bé", "nhỏ bé", "ít"], example: "This shirt is too small for me.", exampleVi: "Chiếc áo sơ mi này quá nhỏ đối với tôi.", related: "smaller (adj)" },
+        { word: "hot", ipa: "/hɒt/", type: "adj", meanings: ["nóng", "cay", "nóng bức"], example: "Summer in Central Vietnam is very hot.", exampleVi: "Mùa hè ở miền Trung Việt Nam rất nóng.", related: "heat (n)" },
+        { word: "cold", ipa: "/kəʊld/", type: "adj, n", meaningsByType: { adj: ["lạnh", "lạnh lẽo", "nguội"], n: ["cảm lạnh", "cái lạnh"] }, meanings: ["lạnh", "lạnh lẽo", "nguội", "cảm lạnh", "cái lạnh"], example: "Wear a coat because it is cold outside.", exampleVi: "Hãy mặc áo khoác vì bên ngoài trời lạnh.", related: "coldness (n), coldly (adv)" },
+        { word: "fast", ipa: "/fɑːst/", type: "adj, adv", meaningsByType: { adj: ["nhanh", "nhanh chóng"], adv: ["nhanh", "một cách nhanh chóng"] }, meanings: ["nhanh", "nhanh chóng", "mau"], example: "This train is very fast.", exampleVi: "Chuyến tàu này rất nhanh.", related: "faster (adj, adv)" },
+        { word: "slow", ipa: "/sləʊ/", type: "adj", meanings: ["chậm", "chậm chạp", "chậm rãi"], example: "The internet connection is slow today.", exampleVi: "Kết nối mạng hôm nay hơi chậm.", related: "slowly (adv), slowness (n)" },
+        { word: "clean", ipa: "/kliːn/", type: "adj, v", meaningsByType: { adj: ["sạch", "sạch sẽ"], v: ["lau dọn", "dọn dẹp", "làm sạch", "rửa"] }, meanings: ["sạch", "sạch sẽ", "lau dọn", "dọn dẹp", "làm sạch", "rửa"], example: "Keep your desk clean and tidy.", exampleVi: "Hãy giữ bàn học của bạn sạch sẽ và gọn gàng.", related: "cleaner (n), cleanliness (n)" },
+        { word: "easy", ipa: "/ˈiː.zi/", type: "adj", meanings: ["dễ", "dễ dàng", "đơn giản"], example: "The first question was very easy.", exampleVi: "Câu hỏi đầu tiên rất dễ.", related: "easily (adv), ease (n)" },
+        { word: "buy", ipa: "/baɪ/", type: "v", meanings: ["mua", "mua sắm"], example: "I want to buy some fresh fruit.", exampleVi: "Tôi muốn mua một ít trái cây tươi.", related: "buyer (n)" },
+        { word: "open", ipa: "/ˈəʊ.pən/", type: "v, adj", meaningsByType: { v: ["mở", "mở cửa", "khai trương"], adj: ["mở", "đang mở", "cởi mở"] }, meanings: ["mở", "mở cửa", "khai trương", "đang mở", "cởi mở"], example: "Could you open the window, please?", exampleVi: "Bạn có thể mở cửa sổ giúp tôi không?", related: "opening (n), openly (adv)" },
+        { word: "close", ipa: "/kləʊz/", type: "v, adj", meaningsByType: { v: ["đóng", "đóng cửa", "khép"], adj: ["gần", "thân thiết", "sát"] }, meanings: ["đóng", "đóng cửa", "khép", "gần", "thân thiết", "sát"], example: "Please close the door quietly.", exampleVi: "Xin hãy đóng cửa nhẹ nhàng.", related: "closely (adv), closure (n)" },
+        { word: "morning", ipa: "/ˈmɔːr.nɪŋ/", type: "n", meanings: ["buổi sáng", "sáng"], example: "I drink coffee every morning.", exampleVi: "Tôi uống cà phê mỗi buổi sáng.", related: "good morning" },
+        { word: "night", ipa: "/naɪt/", type: "n", meanings: ["ban đêm", "đêm", "buổi tối", "tối"], example: "The stars look bright at night.", exampleVi: "Những ngôi sao trông thật sáng vào ban đêm.", related: "nightly (adj, adv), midnight (n)" },
+        { word: "city", ipa: "/ˈsɪt.i/", type: "n", meanings: ["thành phố", "đô thị"], example: "Hue is a peaceful and historic city.", exampleVi: "Huế là một thành phố yên bình và giàu lịch sử.", related: "citizen (n)" },
+        { word: "weather", ipa: "/ˈweð.ər/", type: "n", meanings: ["thời tiết", "tiết trời"], example: "The weather is sunny and warm today.", exampleVi: "Thời tiết hôm nay có nắng và ấm áp.", related: "weather forecast (n)" },
+        { word: "music", ipa: "/ˈmjuː.zɪk/", type: "n", meanings: ["âm nhạc", "nhạc"], example: "She listens to soft music while studying.", exampleVi: "Cô ấy nghe nhạc nhẹ trong khi học bài.", related: "musical (adj), musician (n)" },
+        { word: "phone", ipa: "/fəʊn/", type: "n, v", meaningsByType: { n: ["điện thoại"], v: ["gọi điện", "gọi điện thoại"] }, meanings: ["điện thoại", "gọi điện", "gọi điện thoại"], example: "My phone battery is almost empty.", exampleVi: "Pin điện thoại của tôi sắp hết rồi.", related: "telephone (n), smartphone (n)" },
+        { word: "table", ipa: "/ˈteɪ.bəl/", type: "n", meanings: ["cái bàn", "bàn", "bảng"], example: "Put the plates on the dining table.", exampleVi: "Hãy đặt đĩa lên bàn ăn.", related: "tablecloth (n), timetable (n)" },
+        { word: "doctor", ipa: "/ˈdɒk.tər/", type: "n", meanings: ["bác sĩ", "tiến sĩ"], example: "You should see a doctor if you have a fever.", exampleVi: "Bạn nên đi khám bác sĩ nếu bị sốt.", related: "doctorate (n)" },
+        { word: "help", ipa: "/help/", type: "v, n", meaningsByType: { v: ["giúp", "giúp đỡ", "hỗ trợ"], n: ["sự giúp đỡ", "trợ giúp"] }, meanings: ["giúp", "giúp đỡ", "hỗ trợ", "sự giúp đỡ", "trợ giúp"], example: "Thank you for helping me carry the bags.", exampleVi: "Cảm ơn bạn đã giúp tôi xách túi.", related: "helpful (adj), helpless (adj)" },
+        { word: "today", ipa: "/təˈdeɪ/", type: "adv, n", meaningsByType: { adv: ["hôm nay", "ngày nay"], n: ["ngày hôm nay", "hôm nay"] }, meanings: ["hôm nay", "ngày hôm nay", "ngày nay"], example: "We have a math test today.", exampleVi: "Hôm nay chúng tôi có bài kiểm tra toán.", related: "tomorrow (n, adv), yesterday (n, adv)" }
+      ],
+
+      A2: [
+        { word: "borrow", ipa: "/ˈbɒr.əʊ/", type: "v", meanings: ["mượn", "vay", "vay mượn"], example: "Can I borrow your pen for a minute?", exampleVi: "Tôi có thể mượn bút của bạn một phút không?", related: "borrower (n)" },
+        { word: "journey", ipa: "/ˈdʒɜːr.ni/", type: "n", meanings: ["hành trình", "chuyến đi", "cuộc hành trình"], example: "The train journey to Da Nang took three hours.", exampleVi: "Chuyến đi tàu đến Đà Nẵng mất ba tiếng.", related: "trip (n), voyage (n)" },
+        { word: "careful", ipa: "/ˈkeə.fəl/", type: "adj", meanings: ["cẩn thận", "thận trọng", "kỹ lưỡng"], example: "Be careful when you cross the street.", exampleVi: "Hãy cẩn thận khi bạn băng qua đường.", related: "carefully (adv), careless (adj), care (n, v)" },
+        { word: "advice", ipa: "/ədˈvaɪs/", type: "n", meanings: ["lời khuyên", "sự khuyên bảo", "tư vấn"], example: "My teacher gave me some useful advice.", exampleVi: "Giáo viên của tôi đã cho tôi vài lời khuyên hữu ích.", related: "advise (v), advisor (n)" },
+        { word: "arrive", ipa: "/əˈraɪv/", type: "v", meanings: ["đến", "tới nơi", "đến nơi", "tới"], example: "The flight will arrive at 9:30 p.m.", exampleVi: "Chuyến bay sẽ đến nơi lúc 9 giờ 30 tối.", related: "arrival (n)" },
+        { word: "decide", ipa: "/dɪˈsaɪd/", type: "v", meanings: ["quyết định", "lựa chọn"], example: "We need to decide where to eat tonight.", exampleVi: "Chúng ta cần quyết định tối nay ăn ở đâu.", related: "decision (n), decisive (adj)" },
+        { word: "explain", ipa: "/ɪkˈspleɪn/", type: "v", meanings: ["giải thích", "lý giải"], example: "Could you explain this grammar rule again?", exampleVi: "Bạn có thể giải thích lại quy tắc ngữ pháp này không?", related: "explanation (n)" },
+        { word: "forget", ipa: "/fərˈɡet/", type: "v", meanings: ["quên", "bỏ quên"], example: "Don't forget to bring your umbrella.", exampleVi: "Đừng quên mang theo ô nhé.", related: "forgetful (adj), unforgettable (adj)" },
+        { word: "healthy", ipa: "/ˈhel.θi/", type: "adj", meanings: ["khỏe mạnh", "lành mạnh", "tốt cho sức khỏe"], example: "Eating vegetables helps you stay healthy.", exampleVi: "Ăn rau giúp bạn giữ gìn sức khỏe.", related: "health (n), unhealthy (adj)" },
+        { word: "improve", ipa: "/ɪmˈpruːv/", type: "v", meanings: ["cải thiện", "nâng cao", "tiến bộ", "cải tiến"], example: "Reading every day will improve your vocabulary.", exampleVi: "Đọc sách mỗi ngày sẽ cải thiện vốn từ vựng của bạn.", related: "improvement (n)" },
+        { word: "invite", ipa: "/ɪnˈvaɪt/", type: "v", meanings: ["mời", "rủ"], example: "She invited all her classmates to her birthday party.", exampleVi: "Cô ấy đã mời tất cả bạn cùng lớp đến tiệc sinh nhật.", related: "invitation (n)" },
+        { word: "mistake", ipa: "/mɪˈsteɪk/", type: "n", meanings: ["lỗi", "sai lầm", "lỗi sai", "nhầm lẫn"], example: "Everyone makes mistakes when learning a language.", exampleVi: "Ai cũng mắc lỗi khi học một ngôn ngữ.", related: "mistaken (adj)" },
+        { word: "neighbor", ipa: "/ˈneɪ.bər/", type: "n", meanings: ["hàng xóm", "người hàng xóm", "láng giềng"], example: "Our new neighbor is very friendly.", exampleVi: "Người hàng xóm mới của chúng tôi rất thân thiện.", related: "neighborhood (n)" },
+        { word: "popular", ipa: "/ˈpɒp.jə.lər/", type: "adj", meanings: ["phổ biến", "nổi tiếng", "được ưa chuộng"], example: "Football is the most popular sport here.", exampleVi: "Bóng đá là môn thể thao phổ biến nhất ở đây.", related: "popularity (n), unpopular (adj)" },
+        { word: "prepare", ipa: "/prɪˈpeər/", type: "v", meanings: ["chuẩn bị", "sửa soạn"], example: "I am preparing for my final exams.", exampleVi: "Tôi đang chuẩn bị cho kỳ thi cuối kỳ.", related: "preparation (n), prepared (adj)" },
+        { word: "promise", ipa: "/ˈprɒm.ɪs/", type: "v, n", meaningsByType: { v: ["hứa", "hứa hẹn", "cam kết"], n: ["lời hứa"] }, meanings: ["hứa", "hứa hẹn", "cam kết", "lời hứa"], example: "He promised to call me after class.", exampleVi: "Anh ấy đã hứa sẽ gọi cho tôi sau giờ học.", related: "promising (adj)" },
+        { word: "quiet", ipa: "/ˈkwaɪ.ət/", type: "adj", meanings: ["yên tĩnh", "im lặng", "trầm lắng", "yên ắng"], example: "The library is a quiet place to study.", exampleVi: "Thư viện là một nơi yên tĩnh để học tập.", related: "quietly (adv), quietness (n)" },
+        { word: "remember", ipa: "/rɪˈmem.bər/", type: "v", meanings: ["nhớ", "ghi nhớ", "nhớ lại"], example: "Do you remember his phone number?", exampleVi: "Bạn có nhớ số điện thoại của anh ấy không?", related: "memory (n), memorable (adj)" },
+        { word: "repair", ipa: "/rɪˈpeər/", type: "v, n", meaningsByType: { v: ["sửa", "sửa chữa", "khắc phục"], n: ["sự sửa chữa", "việc sửa chữa"] }, meanings: ["sửa", "sửa chữa", "khắc phục", "sự sửa chữa"], example: "My uncle knows how to repair bicycles.", exampleVi: "Chú tôi biết cách sửa xe đạp.", related: "repairable (adj)" },
+        { word: "share", ipa: "/ʃeər/", type: "v, n", meaningsByType: { v: ["chia sẻ", "dùng chung", "chia"], n: ["phần", "cổ phần", "phần chia"] }, meanings: ["chia sẻ", "dùng chung", "chia", "phần", "cổ phần"], example: "We share a small apartment near the campus.", exampleVi: "Chúng tôi ở chung một căn hộ nhỏ gần trường.", related: "sharing (n), shared (adj)" },
+        { word: "strange", ipa: "/streɪndʒ/", type: "adj", meanings: ["lạ", "kỳ lạ", "xa lạ", "lạ lùng"], example: "I heard a strange noise outside the door.", exampleVi: "Tôi nghe thấy một tiếng động lạ ngoài cửa.", related: "stranger (n), strangely (adv)" },
+        { word: "traffic", ipa: "/ˈtræf.ɪk/", type: "n", meanings: ["giao thông", "xe cộ", "lưu lượng"], example: "The traffic is always heavy at 5 p.m.", exampleVi: "Giao thông luôn đông đúc vào lúc 5 giờ chiều.", related: "traffic jam (n)" },
+        { word: "useful", ipa: "/ˈjuːs.fəl/", type: "adj", meanings: ["hữu ích", "có ích", "tiện dụng"], example: "This app is very useful for learning English.", exampleVi: "Ứng dụng này rất hữu ích cho việc học tiếng Anh.", related: "use (v, n), useless (adj), usefully (adv)" },
+        { word: "village", ipa: "/ˈvɪl.ɪdʒ/", type: "n", meanings: ["làng", "ngôi làng", "làng quê", "thôn"], example: "My grandparents live in a quiet village.", exampleVi: "Ông bà tôi sống ở một ngôi làng yên bình.", related: "villager (n)" },
+        { word: "worried", ipa: "/ˈwʌr.id/", type: "adj", meanings: ["lo lắng", "lo âu", "lo"], example: "She was worried about her test results.", exampleVi: "Cô ấy lo lắng về kết quả bài kiểm tra của mình.", related: "worry (v, n), worrying (adj)" },
+        { word: "already", ipa: "/ɔːlˈred.i/", type: "adv", meanings: ["đã rồi", "rồi", "đã"], example: "I have already finished my homework.", exampleVi: "Tôi đã làm xong bài tập về nhà rồi.", related: "" },
+        { word: "century", ipa: "/ˈsen.tʃər.i/", type: "n", meanings: ["thế kỷ"], example: "This bridge was built in the 19th century.", exampleVi: "Cây cầu này được xây dựng vào thế kỷ 19.", related: "" },
+        { word: "collect", ipa: "/kəˈlekt/", type: "v", meanings: ["sưu tầm", "thu thập", "gom", "tập hợp"], example: "He likes to collect old stamps and coins.", exampleVi: "Anh ấy thích sưu tầm tem và tiền xu cổ.", related: "collection (n), collector (n)" },
+        { word: "comfortable", ipa: "/ˈkʌm.fə.tə.bəl/", type: "adj", meanings: ["thoải mái", "dễ chịu", "tiện nghi"], example: "These shoes are very comfortable for walking.", exampleVi: "Đôi giày này rất thoải mái khi đi bộ.", related: "comfort (n, v), uncomfortable (adj)" },
+        { word: "crowded", ipa: "/ˈkraʊ.dɪd/", type: "adj", meanings: ["đông đúc", "đông người", "chật ních"], example: "The night market is always crowded on weekends.", exampleVi: "Chợ đêm luôn đông đúc vào cuối tuần.", related: "crowd (n, v)" },
+        { word: "customer", ipa: "/ˈkʌs.tə.mər/", type: "n", meanings: ["khách hàng", "khách"], example: "The cafe serves hundreds of customers every morning.", exampleVi: "Quán cà phê phục vụ hàng trăm khách hàng mỗi sáng.", related: "custom (n)" },
+        { word: "dangerous", ipa: "/ˈdeɪn.dʒər.əs/", type: "adj", meanings: ["nguy hiểm"], example: "Driving too fast in the rain is dangerous.", exampleVi: "Lái xe quá nhanh dưới trời mưa rất nguy hiểm.", related: "danger (n), dangerously (adv)" },
+        { word: "describe", ipa: "/dɪˈskraɪb/", type: "v", meanings: ["mô tả", "miêu tả", "diễn tả"], example: "Can you describe your hometown in three words?", exampleVi: "Bạn có thể mô tả quê hương mình bằng ba từ không?", related: "description (n), descriptive (adj)" },
+        { word: "different", ipa: "/ˈdɪf.ər.ənt/", type: "adj", meanings: ["khác", "khác nhau", "khác biệt"], example: "My sister and I have very different hobbies.", exampleVi: "Chị tôi và tôi có những sở thích rất khác nhau.", related: "difference (n), differently (adv)" },
+        { word: "empty", ipa: "/ˈemp.ti/", type: "adj, v", meaningsByType: { adj: ["trống", "trống rỗng", "rỗng", "vắng"], v: ["làm trống", "đổ hết"] }, meanings: ["trống", "trống rỗng", "rỗng", "vắng", "làm trống"], example: "The classroom was completely empty after 5 p.m.", exampleVi: "Lớp học hoàn toàn trống vắng sau 5 giờ chiều.", related: "emptiness (n)" },
+        { word: "excited", ipa: "/ɪkˈsaɪ.tɪd/", type: "adj", meanings: ["hào hứng", "phấn khích", "háo hức", "vui sướng"], example: "The students are excited about the summer trip.", exampleVi: "Các học sinh rất hào hứng về chuyến đi mùa hè.", related: "excite (v), exciting (adj), excitement (n)" },
+        { word: "furniture", ipa: "/ˈfɜːr.nɪ.tʃər/", type: "n", meanings: ["đồ nội thất", "nội thất", "đồ đạc"], example: "They bought new wooden furniture for the living room.", exampleVi: "Họ đã mua đồ nội thất bằng gỗ mới cho phòng khách.", related: "furnish (v)" },
+        { word: "happen", ipa: "/ˈhæp.ən/", type: "v", meanings: ["xảy ra", "diễn ra", "tình cờ"], example: "What happened to your laptop yesterday?", exampleVi: "Chuyện gì đã xảy ra với chiếc máy tính xách tay của bạn hôm qua?", related: "happening (n)" },
+        { word: "include", ipa: "/ɪnˈkluːd/", type: "v", meanings: ["bao gồm", "gồm có", "tính cả"], example: "The ticket price includes breakfast.", exampleVi: "Giá vé đã bao gồm bữa sáng.", related: "including (prep), inclusion (n)" },
+        { word: "passenger", ipa: "/ˈpæs.ən.dʒər/", type: "n", meanings: ["hành khách", "khách đi xe"], example: "All passengers must fasten their seatbelts.", exampleVi: "Tất cả hành khách phải thắt dây an toàn.", related: "" },
+        { word: "polite", ipa: "/pəˈlaɪt/", type: "adj", meanings: ["lịch sự", "lễ phép", "nhã nhặn"], example: "It is polite to say thank you.", exampleVi: "Nói lời cảm ơn là phép lịch sự.", related: "politely (adv), politeness (n), impolite (adj)" },
+        { word: "return", ipa: "/rɪˈtɜːrn/", type: "v, n", meaningsByType: { v: ["trở về", "quay lại", "trả lại", "hoàn trả"], n: ["sự trở về", "vé khứ hồi", "sự hoàn trả"] }, meanings: ["trở về", "quay lại", "trả lại", "hoàn trả", "sự trở về"], example: "Please return the library books on Friday.", exampleVi: "Xin hãy trả sách thư viện vào thứ Sáu.", related: "returnable (adj)" }
+      ],
+
+      B1: [
+        { word: "achieve", ipa: "/əˈtʃiːv/", type: "v", meanings: ["đạt được", "giành được", "hoàn thành", "thực hiện được"], example: "With steady effort, you can achieve your goals.", exampleVi: "Với sự nỗ lực đều đặn, bạn có thể đạt được mục tiêu của mình.", related: "achievement (n), achievable (adj)" },
+        { word: "environment", ipa: "/ɪnˈvaɪ.rən.mənt/", type: "n", meanings: ["môi trường", "hoàn cảnh xung quanh"], example: "We must protect the natural environment.", exampleVi: "Chúng ta phải bảo vệ môi trường tự nhiên.", related: "environmental (adj), environmentalist (n)" },
+        { word: "opportunity", ipa: "/ˌɒp.əˈtjuː.nə.ti/", type: "n", meanings: ["cơ hội", "dịp", "thời cơ"], example: "Studying abroad is a great opportunity to grow.", exampleVi: "Du học là một cơ hội tuyệt vời để trưởng thành.", related: "opportune (adj)" },
+        { word: "advantage", ipa: "/ədˈvɑːn.tɪdʒ/", type: "n", meanings: ["lợi thế", "ưu điểm", "thuận lợi", "lợi ích"], example: "Speaking two languages gives you a big advantage.", exampleVi: "Nói được hai ngôn ngữ mang lại cho bạn một lợi thế lớn.", related: "advantageous (adj), disadvantage (n)" },
+        { word: "attitude", ipa: "/ˈæt.ɪ.tjuːd/", type: "n", meanings: ["thái độ", "quan điểm"], example: "A positive attitude helps you overcome difficulties.", exampleVi: "Thái độ tích cực giúp bạn vượt qua khó khăn.", related: "" },
+        { word: "benefit", ipa: "/ˈben.ɪ.fɪt/", type: "n, v", meaningsByType: { n: ["lợi ích", "phúc lợi", "quyền lợi"], v: ["hưởng lợi", "có lợi cho", "giúp ích"] }, meanings: ["lợi ích", "phúc lợi", "quyền lợi", "hưởng lợi", "có lợi cho"], example: "Regular exercise has many health benefits.", exampleVi: "Tập thể dục thường xuyên mang lại nhiều lợi ích cho sức khỏe.", related: "beneficial (adj)" },
+        { word: "challenge", ipa: "/ˈtʃæl.ɪndʒ/", type: "n, v", meaningsByType: { n: ["thử thách", "thách thức", "khó khăn"], v: ["thách thức", "thử thách", "chất vấn"] }, meanings: ["thử thách", "thách thức", "khó khăn", "chất vấn"], example: "Learning to code was an exciting challenge for me.", exampleVi: "Học lập trình là một thử thách thú vị đối với tôi.", related: "challenging (adj), challenger (n)" },
+        { word: "communicate", ipa: "/kəˈmjuː.nɪ.keɪt/", type: "v", meanings: ["giao tiếp", "truyền đạt", "liên lạc"], example: "Good leaders communicate clearly with their team.", exampleVi: "Những nhà lãnh đạo giỏi giao tiếp rõ ràng với đội ngũ của họ.", related: "communication (n), communicative (adj)" },
+        { word: "compare", ipa: "/kəmˈpeər/", type: "v", meanings: ["so sánh", "đối chiếu"], example: "Always compare prices before buying online.", exampleVi: "Hãy luôn so sánh giá cả trước khi mua hàng trực tuyến.", related: "comparison (n), comparable (adj)" },
+        { word: "confident", ipa: "/ˈkɒn.fɪ.dənt/", type: "adj", meanings: ["tự tin", "tin chắc"], example: "She felt confident during the job interview.", exampleVi: "Cô ấy cảm thấy tự tin trong buổi phỏng vấn xin việc.", related: "confidence (n), confidently (adv)" },
+        { word: "consider", ipa: "/kənˈsɪd.ər/", type: "v", meanings: ["cân nhắc", "xem xét", "coi là", "suy xét"], example: "You should consider all options before deciding.", exampleVi: "Bạn nên cân nhắc mọi lựa chọn trước khi quyết định.", related: "consideration (n), considerate (adj)" },
+        { word: "create", ipa: "/kriˈeɪt/", type: "v", meanings: ["tạo ra", "sáng tạo", "tạo nên", "lập ra"], example: "The artist created a beautiful mural on the wall.", exampleVi: "Người nghệ sĩ đã tạo ra một bức tranh tường tuyệt đẹp.", related: "creation (n), creative (adj), creativity (n)" },
+        { word: "culture", ipa: "/ˈkʌl.tʃər/", type: "n", meanings: ["văn hóa", "nền văn hóa"], example: "Travel allows you to learn about different cultures.", exampleVi: "Du lịch cho phép bạn tìm hiểu về các nền văn hóa khác nhau.", related: "cultural (adj), multicultural (adj)" },
+        { word: "develop", ipa: "/dɪˈvel.əp/", type: "v", meanings: ["phát triển", "xây dựng", "mở rộng"], example: "The company wants to develop a new mobile app.", exampleVi: "Công ty muốn phát triển một ứng dụng di động mới.", related: "development (n), developer (n)" },
+        { word: "discover", ipa: "/dɪˈskʌv.ər/", type: "v", meanings: ["khám phá", "phát hiện", "tìm ra"], example: "Scientists discovered a new species of frog.", exampleVi: "Các nhà khoa học đã phát hiện ra một loài ếch mới.", related: "discovery (n)" },
+        { word: "encourage", ipa: "/ɪnˈkʌr.ɪdʒ/", type: "v", meanings: ["khuyến khích", "động viên", "cổ vũ"], example: "My parents always encourage me to try new things.", exampleVi: "Bố mẹ tôi luôn khuyến khích tôi thử những điều mới.", related: "encouragement (n), encouraging (adj)" },
+        { word: "experience", ipa: "/ɪkˈspɪə.ri.əns/", type: "n, v", meaningsByType: { n: ["kinh nghiệm", "trải nghiệm"], v: ["trải qua", "trải nghiệm"] }, meanings: ["kinh nghiệm", "trải nghiệm", "trải qua"], example: "Volunteering was an unforgettable experience.", exampleVi: "Làm tình nguyện là một trải nghiệm khó quên.", related: "experienced (adj), inexperienced (adj)" },
+        { word: "focus", ipa: "/ˈfəʊ.kəs/", type: "v, n", meaningsByType: { v: ["tập trung", "chú trọng"], n: ["trọng tâm", "tiêu điểm", "sự tập trung"] }, meanings: ["tập trung", "chú trọng", "trọng tâm", "tiêu điểm", "sự tập trung"], example: "Turn off notifications so you can focus on studying.", exampleVi: "Hãy tắt thông báo để bạn có thể tập trung học bài.", related: "focused (adj)" },
+        { word: "habit", ipa: "/ˈhæb.ɪt/", type: "n", meanings: ["thói quen", "tập quán"], example: "Reading ten pages a day is a good habit.", exampleVi: "Đọc mười trang sách mỗi ngày là một thói quen tốt.", related: "habitual (adj)" },
+        { word: "independent", ipa: "/ˌɪn.dɪˈpen.dənt/", type: "adj", meanings: ["độc lập", "tự lập"], example: "Living away from home made him more independent.", exampleVi: "Sống xa nhà đã khiến anh ấy tự lập hơn.", related: "independence (n), independently (adv)" },
+        { word: "influence", ipa: "/ˈɪn.flu.əns/", type: "n, v", meaningsByType: { n: ["ảnh hưởng", "sự ảnh hưởng", "tác động"], v: ["ảnh hưởng", "tác động đến", "chi phối"] }, meanings: ["ảnh hưởng", "sự ảnh hưởng", "tác động", "chi phối"], example: "Social media has a huge influence on young people.", exampleVi: "Mạng xã hội có ảnh hưởng rất lớn đến giới trẻ.", related: "influential (adj)" },
+        { word: "manage", ipa: "/ˈmæn.ɪdʒ/", type: "v", meanings: ["quản lý", "xoay xở", "điều hành", "kiểm soát"], example: "It is important to manage your time wisely.", exampleVi: "Quản lý thời gian một cách khôn ngoan là điều rất quan trọng.", related: "management (n), manager (n)" },
+        { word: "memory", ipa: "/ˈmem.ər.i/", type: "n", meanings: ["trí nhớ", "ký ức", "kỷ niệm", "bộ nhớ"], example: "I have fond memories of my childhood.", exampleVi: "Tôi có những kỷ niệm đẹp về tuổi thơ của mình.", related: "memorize (v), memorable (adj)" },
+        { word: "opinion", ipa: "/əˈpɪn.jən/", type: "n", meanings: ["ý kiến", "quan điểm", "nhận định"], example: "In my opinion, teamwork is essential for success.", exampleVi: "Theo quan điểm của tôi, làm việc nhóm là yếu tố thiết yếu để thành công.", related: "" },
+        { word: "organize", ipa: "/ˈɔːr.ɡə.naɪz/", type: "v", meanings: ["tổ chức", "sắp xếp", "bố trí"], example: "They organized a charity event at the university.", exampleVi: "Họ đã tổ chức một sự kiện từ thiện tại trường đại học.", related: "organization (n), organized (adj)" },
+        { word: "patient", ipa: "/ˈpeɪ.ʃənt/", type: "adj, n", meaningsByType: { adj: ["kiên nhẫn", "nhẫn nại"], n: ["bệnh nhân"] }, meanings: ["kiên nhẫn", "nhẫn nại", "bệnh nhân"], example: "You have to be patient when learning a musical instrument.", exampleVi: "Bạn phải kiên nhẫn khi học một loại nhạc cụ.", related: "patience (n), patiently (adv), impatient (adj)" },
+        { word: "perform", ipa: "/pərˈfɔːrm/", type: "v", meanings: ["biểu diễn", "thực hiện", "trình diễn", "làm"], example: "The band will perform live on Saturday night.", exampleVi: "Ban nhạc sẽ biểu diễn trực tiếp vào tối thứ Bảy.", related: "performance (n), performer (n)" },
+        { word: "protect", ipa: "/prəˈtekt/", type: "v", meanings: ["bảo vệ", "che chở"], example: "Sunscreen helps protect your skin from UV rays.", exampleVi: "Kem chống nắng giúp bảo vệ làn da khỏi tia cực tím.", related: "protection (n), protective (adj)" },
+        { word: "quality", ipa: "/ˈkwɒl.ə.ti/", type: "n", meanings: ["chất lượng", "phẩm chất", "đặc tính"], example: "We focus on quality rather than quantity.", exampleVi: "Chúng tôi chú trọng chất lượng hơn là số lượng.", related: "qualitative (adj)" },
+        { word: "realize", ipa: "/ˈrɪə.laɪz/", type: "v", meanings: ["nhận ra", "nhận thức", "thực hiện được"], example: "I didn't realize how late it was.", exampleVi: "Tôi đã không nhận ra trời đã muộn đến thế.", related: "realization (n)" },
+        { word: "recommend", ipa: "/ˌrek.əˈmend/", type: "v", meanings: ["gợi ý", "đề xuất", "giới thiệu", "khuyên dùng"], example: "Can you recommend a good coffee shop nearby?", exampleVi: "Bạn có thể giới thiệu một quán cà phê ngon gần đây không?", related: "recommendation (n)" },
+        { word: "reduce", ipa: "/rɪˈdjuːs/", type: "v", meanings: ["giảm", "giảm thiểu", "cắt giảm", "làm giảm"], example: "Using reusable bags helps reduce plastic waste.", exampleVi: "Sử dụng túi tái sử dụng giúp giảm thiểu rác thải nhựa.", related: "reduction (n)" },
+        { word: "relationship", ipa: "/rɪˈleɪ.ʃən.ʃɪp/", type: "n", meanings: ["mối quan hệ", "quan hệ", "tình cảm"], example: "Trust is the foundation of any strong relationship.", exampleVi: "Sự tin tưởng là nền tảng của mọi mối quan hệ bền chặt.", related: "relate (v), relation (n)" },
+        { word: "require", ipa: "/rɪˈkwaɪər/", type: "v", meanings: ["yêu cầu", "đòi hỏi", "cần đến"], example: "This job requires strong communication skills.", exampleVi: "Công việc này đòi hỏi kỹ năng giao tiếp tốt.", related: "requirement (n)" },
+        { word: "responsible", ipa: "/rɪˈspɒn.sə.bəl/", type: "adj", meanings: ["có trách nhiệm", "chịu trách nhiệm", "đáng tin cậy"], example: "She is responsible for managing the project schedule.", exampleVi: "Cô ấy chịu trách nhiệm quản lý tiến độ dự án.", related: "responsibility (n), responsibly (adv)" },
+        { word: "solution", ipa: "/səˈluː.ʃən/", type: "n", meanings: ["giải pháp", "cách giải quyết", "lời giải", "dung dịch"], example: "We need to find a practical solution to this issue.", exampleVi: "Chúng ta cần tìm một giải pháp thực tế cho vấn đề này.", related: "solve (v)" },
+        { word: "succeed", ipa: "/səkˈsiːd/", type: "v", meanings: ["thành công", "đạt kết quả", "kế nhiệm"], example: "She worked hard and finally succeeded.", exampleVi: "Cô ấy đã làm việc chăm chỉ và cuối cùng đã thành công.", related: "success (n), successful (adj)" },
+        { word: "suggest", ipa: "/səˈdʒest/", type: "v", meanings: ["đề nghị", "gợi ý", "đề xuất"], example: "I suggest taking a short break before continuing.", exampleVi: "Tôi đề nghị nghỉ giải lao một chút trước khi tiếp tục.", related: "suggestion (n)" },
+        { word: "support", ipa: "/səˈpɔːrt/", type: "v, n", meaningsByType: { v: ["ủng hộ", "hỗ trợ", "nuôi dưỡng", "chống đỡ"], n: ["sự ủng hộ", "sự hỗ trợ", "chỗ dựa"] }, meanings: ["ủng hộ", "hỗ trợ", "sự ủng hộ", "sự hỗ trợ"], example: "Thank you for your constant support.", exampleVi: "Cảm ơn sự ủng hộ không ngừng của bạn.", related: "supporter (n), supportive (adj)" },
+        { word: "tradition", ipa: "/trəˈdɪʃ.ən/", type: "n", meanings: ["truyền thống", "phong tục"], example: "Making banh chung is a cherished Tet tradition.", exampleVi: "Gói bánh chưng là một truyền thống Tết đáng trân trọng.", related: "traditional (adj), traditionally (adv)" },
+        { word: "volunteer", ipa: "/ˌvɒl.ənˈtɪər/", type: "n, v", meaningsByType: { n: ["tình nguyện viên", "người tình nguyện"], v: ["tình nguyện", "xung phong"] }, meanings: ["tình nguyện viên", "người tình nguyện", "tình nguyện", "xung phong"], example: "Many students volunteer to clean up the beach.", exampleVi: "Nhiều sinh viên tình nguyện dọn dẹp bãi biển.", related: "voluntary (adj)" },
+        { word: "average", ipa: "/ˈæv.ər.ɪdʒ/", type: "adj, n", meaningsByType: { adj: ["trung bình", "bình thường"], n: ["mức trung bình", "số trung bình", "trung bình"] }, meanings: ["trung bình", "mức trung bình", "số trung bình", "bình thường"], example: "The average temperature in winter is 18 degrees.", exampleVi: "Nhiệt độ trung bình vào mùa đông là 18 độ.", related: "" }
+      ],
+
+      B2: [
+        { word: "consequence", ipa: "/ˈkɒn.sɪ.kwəns/", type: "n", meanings: ["hậu quả", "kết quả", "hệ quả"], example: "Ignoring climate change will have serious consequences.", exampleVi: "Phớt lờ biến đổi khí hậu sẽ gây ra những hậu quả nghiêm trọng.", related: "consequent (adj), consequently (adv)" },
+        { word: "reluctant", ipa: "/rɪˈlʌk.tənt/", type: "adj", meanings: ["miễn cưỡng", "do dự", "ngần ngại", "không sẵn lòng"], example: "He was reluctant to admit his mistake.", exampleVi: "Anh ấy miễn cưỡng thừa nhận lỗi lầm của mình.", related: "reluctance (n), reluctantly (adv)" },
+        { word: "sustain", ipa: "/səˈsteɪn/", type: "v", meanings: ["duy trì", "chống đỡ", "nuôi dưỡng", "chịu đựng"], example: "It is hard to sustain high energy without enough sleep.", exampleVi: "Thật khó để duy trì năng lượng cao nếu không ngủ đủ giấc.", related: "sustainable (adj), sustainability (n)" },
+        { word: "accurate", ipa: "/ˈæk.jə.rət/", type: "adj", meanings: ["chính xác", "đúng đắn", "chuẩn xác"], example: "The weather forecast turned out to be very accurate.", exampleVi: "Dự báo thời tiết hóa ra rất chính xác.", related: "accuracy (n), accurately (adv), inaccurate (adj)" },
+        { word: "adapt", ipa: "/əˈdæpt/", type: "v", meanings: ["thích nghi", "thích ứng", "điều chỉnh", "chuyển thể"], example: "Businesses must adapt quickly to new technologies.", exampleVi: "Các doanh nghiệp phải thích nghi nhanh chóng với công nghệ mới.", related: "adaptation (n), adaptable (adj)" },
+        { word: "adequate", ipa: "/ˈæd.ə.kwət/", type: "adj", meanings: ["đầy đủ", "thỏa đáng", "tương xứng", "đủ"], example: "Make sure you have adequate lighting while reading.", exampleVi: "Hãy đảm bảo bạn có đủ ánh sáng khi đọc sách.", related: "adequately (adv), inadequate (adj)" },
+        { word: "allocate", ipa: "/ˈæl.ə.keɪt/", type: "v", meanings: ["phân bổ", "cấp phát", "dành riêng", "chia phần"], example: "The city allocated funds to build new parks.", exampleVi: "Thành phố đã phân bổ ngân sách để xây dựng các công viên mới.", related: "allocation (n)" },
+        { word: "alternative", ipa: "/ɔːlˈtɜːr.nə.tɪv/", type: "n, adj", meaningsByType: { n: ["phương án thay thế", "lựa chọn khác", "giải pháp thay thế"], adj: ["thay thế", "khác"] }, meanings: ["thay thế", "phương án thay thế", "lựa chọn khác", "giải pháp thay thế"], example: "Solar power is a clean alternative to fossil fuels.", exampleVi: "Năng lượng mặt trời là một giải pháp thay thế sạch cho nhiên liệu hóa thạch.", related: "alternatively (adv)" },
+        { word: "analyze", ipa: "/ˈæn.ə.laɪz/", type: "v", meanings: ["phân tích", "xem xét kỹ"], example: "We need to analyze the survey data carefully.", exampleVi: "Chúng ta cần phân tích dữ liệu khảo sát một cách cẩn thận.", related: "analysis (n), analytical (adj), analyst (n)" },
+        { word: "apparent", ipa: "/əˈpær.ənt/", type: "adj", meanings: ["rõ ràng", "hiển nhiên", "rõ rệt", "bề ngoài"], example: "It became apparent that the plan needed changes.", exampleVi: "Rõ ràng là kế hoạch cần phải có những thay đổi.", related: "apparently (adv)" },
+        { word: "approach", ipa: "/əˈprəʊtʃ/", type: "v, n", meaningsByType: { v: ["tiếp cận", "đến gần", "lại gần"], n: ["cách tiếp cận", "phương pháp", "hướng giải quyết"] }, meanings: ["tiếp cận", "đến gần", "cách tiếp cận", "phương pháp"], example: "We should try a different approach to solve this problem.", exampleVi: "Chúng ta nên thử một cách tiếp cận khác để giải quyết vấn đề này.", related: "approachable (adj)" },
+        { word: "assume", ipa: "/əˈsjuːm/", type: "v", meanings: ["giả định", "cho rằng", "đảm nhận", "đoán"], example: "Don't assume anything without checking the facts.", exampleVi: "Đừng giả định điều gì khi chưa kiểm tra sự thật.", related: "assumption (n)" },
+        { word: "capacity", ipa: "/kəˈpæs.ə.ti/", type: "n", meanings: ["sức chứa", "năng lực", "khả năng", "công suất"], example: "The stadium has a seating capacity of 40,000.", exampleVi: "Sân vận động có sức chứa 40.000 chỗ ngồi.", related: "capable (adj)" },
+        { word: "collaborate", ipa: "/kəˈlæb.ə.reɪt/", type: "v", meanings: ["hợp tác", "cộng tác", "phối hợp"], example: "Researchers from five countries collaborated on the study.", exampleVi: "Các nhà nghiên cứu từ năm quốc gia đã hợp tác trong nghiên cứu này.", related: "collaboration (n), collaborative (adj)" },
+        { word: "commit", ipa: "/kəˈmɪt/", type: "v", meanings: ["cam kết", "phạm phải", "cống hiến", "gắn bó"], example: "She committed to practicing English every evening.", exampleVi: "Cô ấy đã cam kết luyện tập tiếng Anh mỗi tối.", related: "commitment (n), committed (adj)" },
+        { word: "compatible", ipa: "/kəmˈpæt.ə.bəl/", type: "adj", meanings: ["tương thích", "hợp nhau", "phù hợp"], example: "This software is compatible with both Android and iOS.", exampleVi: "Phần mềm này tương thích với cả Android và iOS.", related: "compatibility (n), incompatible (adj)" },
+        { word: "comprehensive", ipa: "/ˌkɒm.prɪˈhen.sɪv/", type: "adj", meanings: ["toàn diện", "bao quát", "đầy đủ", "tổng thể"], example: "The report provides a comprehensive overview of the market.", exampleVi: "Báo cáo cung cấp một cái nhìn tổng quan toàn diện về thị trường.", related: "comprehend (v), comprehension (n)" },
+        { word: "conflict", ipa: "/ˈkɒn.flɪkt/", type: "n, v", meaningsByType: { n: ["xung đột", "mâu thuẫn", "tranh chấp"], v: ["mâu thuẫn", "xung đột", "trái ngược"] }, meanings: ["xung đột", "mâu thuẫn", "tranh chấp", "trái ngược"], example: "Open dialogue can help resolve workplace conflicts.", exampleVi: "Đối thoại cởi mở có thể giúp giải quyết các xung đột nơi làm việc.", related: "conflicting (adj)" },
+        { word: "consistent", ipa: "/kənˈsɪs.tənt/", type: "adj", meanings: ["nhất quán", "kiên định", "đều đặn", "ổn định"], example: "Consistent practice is the key to fluency.", exampleVi: "Luyện tập đều đặn là chìa khóa để nói trôi chảy.", related: "consistency (n), consistently (adv), inconsistent (adj)" },
+        { word: "contribute", ipa: "/kənˈtrɪb.juːt/", type: "v", meanings: ["đóng góp", "góp phần", "cống hiến"], example: "Every team member contributed valuable ideas.", exampleVi: "Mỗi thành viên trong nhóm đều đóng góp những ý tưởng quý giá.", related: "contribution (n), contributor (n)" },
+        { word: "controversial", ipa: "/ˌkɒn.trəˈvɜːr.ʃəl/", type: "adj", meanings: ["gây tranh cãi", "có nhiều ý kiến trái chiều"], example: "The new policy proved to be quite controversial.", exampleVi: "Chính sách mới hóa ra lại khá gây tranh cãi.", related: "controversy (n)" },
+        { word: "crucial", ipa: "/ˈkruː.ʃəl/", type: "adj", meanings: ["then chốt", "cực kỳ quan trọng", "cốt yếu", "quyết định"], example: "Clear communication is crucial during a crisis.", exampleVi: "Giao tiếp rõ ràng là yếu tố then chốt trong cơn khủng hoảng.", related: "crucially (adv)" },
+        { word: "decline", ipa: "/dɪˈklaɪn/", type: "v, n", meaningsByType: { v: ["suy giảm", "giảm sút", "từ chối"], n: ["sự suy giảm", "sự giảm sút"] }, meanings: ["suy giảm", "giảm sút", "từ chối", "sự suy giảm"], example: "He politely declined the invitation due to his busy schedule.", exampleVi: "Anh ấy lịch sự từ chối lời mời vì lịch trình bận rộn.", related: "" },
+        { word: "demonstrate", ipa: "/ˈdem.ən.streɪt/", type: "v", meanings: ["chứng minh", "minh họa", "thể hiện", "trình diễn"], example: "The experiment demonstrates how cloud storage works.", exampleVi: "Thí nghiệm minh họa cách lưu trữ đám mây hoạt động.", related: "demonstration (n)" },
+        { word: "distinguish", ipa: "/dɪˈstɪŋ.ɡwɪʃ/", type: "v", meanings: ["phân biệt", "nhận biết", "làm nổi bật"], example: "It is hard to distinguish the twins from each other.", exampleVi: "Thật khó để phân biệt cặp song sinh với nhau.", related: "distinction (n), distinguished (adj)" },
+        { word: "diverse", ipa: "/daɪˈvɜːrs/", type: "adj", meanings: ["đa dạng", "phong phú", "nhiều loại khác nhau"], example: "The city is known for its diverse cuisine.", exampleVi: "Thành phố nổi tiếng với nền ẩm thực đa dạng.", related: "diversity (n), diversify (v)" },
+        { word: "efficient", ipa: "/ɪˈfɪʃ.ənt/", type: "adj", meanings: ["hiệu quả", "năng suất", "có hiệu suất cao"], example: "Public transport is an efficient way to travel in big cities.", exampleVi: "Giao thông công cộng là một cách di chuyển hiệu quả ở các thành phố lớn.", related: "efficiency (n), efficiently (adv), inefficient (adj)" },
+        { word: "emphasize", ipa: "/ˈem.fə.saɪz/", type: "v", meanings: ["nhấn mạnh", "chú trọng", "làm nổi bật"], example: "The professor emphasized the importance of data security.", exampleVi: "Giáo sư nhấn mạnh tầm quan trọng của bảo mật dữ liệu.", related: "emphasis (n), emphatic (adj)" },
+        { word: "enhance", ipa: "/ɪnˈhɑːns/", type: "v", meanings: ["nâng cao", "tăng cường", "cải thiện", "làm nổi bật"], example: "Good lighting can greatly enhance a photograph.", exampleVi: "Ánh sáng tốt có thể nâng cao chất lượng bức ảnh đáng kể.", related: "enhancement (n)" },
+        { word: "evaluate", ipa: "/ɪˈvæl.ju.eɪt/", type: "v", meanings: ["đánh giá", "định giá", "thẩm định"], example: "Teachers evaluate students through projects and exams.", exampleVi: "Giáo viên đánh giá sinh viên thông qua các dự án và bài thi.", related: "evaluation (n)" },
+        { word: "evidence", ipa: "/ˈev.ɪ.dəns/", type: "n", meanings: ["bằng chứng", "chứng cứ", "dẫn chứng"], example: "There is strong evidence supporting this theory.", exampleVi: "Có bằng chứng mạnh mẽ ủng hộ giả thuyết này.", related: "evident (adj), evidently (adv)" },
+        { word: "flexible", ipa: "/ˈflek.sə.bəl/", type: "adj", meanings: ["linh hoạt", "mềm dẻo", "dễ uốn", "uyển chuyển"], example: "Many companies now offer flexible working hours.", exampleVi: "Nhiều công ty hiện nay cung cấp giờ làm việc linh hoạt.", related: "flexibility (n), inflexible (adj)" },
+        { word: "implement", ipa: "/ˈɪm.plɪ.ment/", type: "v", meanings: ["triển khai", "thực hiện", "áp dụng", "thi hành"], example: "The school plans to implement a new grading system.", exampleVi: "Nhà trường dự định triển khai một hệ thống chấm điểm mới.", related: "implementation (n)" },
+        { word: "inevitable", ipa: "/ɪnˈev.ɪ.tə.bəl/", type: "adj", meanings: ["không thể tránh khỏi", "tất yếu", "chắc chắn xảy ra"], example: "Change is an inevitable part of life.", exampleVi: "Sự thay đổi là một phần tất yếu của cuộc sống.", related: "inevitably (adv)" },
+        { word: "maintain", ipa: "/meɪnˈteɪn/", type: "v", meanings: ["duy trì", "bảo trì", "giữ gìn", "khẳng định"], example: "It takes effort to maintain a healthy work-life balance.", exampleVi: "Cần có nỗ lực để duy trì sự cân bằng lành mạnh giữa công việc và cuộc sống.", related: "maintenance (n)" },
+        { word: "negotiate", ipa: "/nɪˈɡəʊ.ʃi.eɪt/", type: "v", meanings: ["đàm phán", "thương lượng", "thương thảo"], example: "Both sides met to negotiate a fair contract.", exampleVi: "Cả hai bên đã gặp nhau để đàm phán một bản hợp đồng công bằng.", related: "negotiation (n), negotiator (n)" },
+        { word: "obstacle", ipa: "/ˈɒb.stə.kəl/", type: "n", meanings: ["trở ngại", "chướng ngại vật", "rào cản"], example: "Lack of funding was the biggest obstacle to the project.", exampleVi: "Thiếu kinh phí là trở ngại lớn nhất đối với dự án.", related: "" },
+        { word: "perspective", ipa: "/pərˈspek.tɪv/", type: "n", meanings: ["góc nhìn", "quan điểm", "viễn cảnh", "phối cảnh"], example: "Living abroad gave her a fresh perspective on life.", exampleVi: "Sống ở nước ngoài mang lại cho cô ấy một góc nhìn mới mẻ về cuộc sống.", related: "" },
+        { word: "priority", ipa: "/praɪˈɒr.ə.ti/", type: "n", meanings: ["ưu tiên", "sự ưu tiên", "quyền ưu tiên"], example: "Safety is always our top priority.", exampleVi: "An toàn luôn là ưu tiên hàng đầu của chúng tôi.", related: "prioritize (v), prior (adj)" },
+        { word: "significant", ipa: "/sɪɡˈnɪf.ɪ.kənt/", type: "adj", meanings: ["đáng kể", "quan trọng", "có ý nghĩa lớn"], example: "There has been a significant increase in online learning.", exampleVi: "Đã có một sự gia tăng đáng kể trong việc học trực tuyến.", related: "significance (n), significantly (adv)" },
+        { word: "sufficient", ipa: "/səˈfɪʃ.ənt/", type: "adj", meanings: ["đủ", "đầy đủ", "thỏa đáng"], example: "We do not have sufficient data to draw a conclusion.", exampleVi: "Chúng ta không có đủ dữ liệu để đưa ra kết luận.", related: "sufficiency (n), sufficiently (adv), insufficient (adj)" },
+        { word: "temporary", ipa: "/ˈtem.pər.ər.i/", type: "adj", meanings: ["tạm thời", "nhất thời", "ngắn hạn"], example: "The road closure is only temporary.", exampleVi: "Việc đóng đường chỉ là tạm thời.", related: "temporarily (adv)" }
+      ],
+
+      C1: [
+        { word: "meticulous", ipa: "/məˈtɪk.jə.ləs/", type: "adj", meanings: ["tỉ mỉ", "kỹ lưỡng", "cẩn thận từng chi tiết", "cầu toàn"], example: "She is meticulous about checking every line of code.", exampleVi: "Cô ấy rất tỉ mỉ trong việc kiểm tra từng dòng mã.", related: "meticulously (adv), meticulousness (n)" },
+        { word: "ambiguous", ipa: "/æmˈbɪɡ.ju.əs/", type: "adj", meanings: ["mơ hồ", "mập mờ", "không rõ ràng", "đa nghĩa"], example: "The wording of the contract was deliberately ambiguous.", exampleVi: "Cách diễn đạt của bản hợp đồng cố tình mập mờ.", related: "ambiguity (n), ambiguously (adv), unambiguous (adj)" },
+        { word: "mitigate", ipa: "/ˈmɪt.ɪ.ɡeɪt/", type: "v", meanings: ["giảm nhẹ", "làm dịu", "giảm thiểu", "xoa dịu"], example: "Planting trees helps mitigate the effects of urban heat.", exampleVi: "Trồng cây giúp giảm nhẹ tác động của hiệu ứng đảo nhiệt đô thị.", related: "mitigation (n)" },
+        { word: "advocate", ipa: "/ˈæd.və.keɪt/", type: "v, n", meaningsByType: { v: ["ủng hộ", "chủ trương", "bênh vực", "vận động"], n: ["người ủng hộ", "người bênh vực", "nhà vận động"] }, meanings: ["ủng hộ", "chủ trương", "bênh vực", "người ủng hộ", "vận động"], example: "Many experts advocate for stricter data privacy laws.", exampleVi: "Nhiều chuyên gia ủng hộ luật bảo mật dữ liệu chặt chẽ hơn.", related: "advocacy (n)" },
+        { word: "alleviate", ipa: "/əˈliː.vi.eɪt/", type: "v", meanings: ["làm giảm bớt", "xoa dịu", "giảm nhẹ", "làm dịu"], example: "New public transit lines could alleviate traffic congestion.", exampleVi: "Các tuyến giao thông công cộng mới có thể làm giảm bớt tình trạng ùn tắc.", related: "alleviation (n)" },
+        { word: "arbitrary", ipa: "/ˈɑːr.bɪ.trər.i/", type: "adj", meanings: ["tùy tiện", "độc đoán", "ngẫu nhiên", "vô căn cứ"], example: "The deadline seemed completely arbitrary to the team.", exampleVi: "Hạn chót đó có vẻ hoàn toàn tùy tiện đối với cả nhóm.", related: "arbitrarily (adv)" },
+        { word: "articulate", ipa: "/ɑːrˈtɪk.jə.lət/", type: "adj, v", meaningsByType: { adj: ["lưu loát", "rõ ràng", "ăn nói sắc sảo"], v: ["diễn đạt rõ ràng", "trình bày rõ", "phát âm rõ"] }, meanings: ["diễn đạt rõ ràng", "lưu loát", "rõ ràng", "trình bày rõ"], example: "He struggled to articulate his complex ideas simply.", exampleVi: "Anh ấy gặp khó khăn khi diễn đạt những ý tưởng phức tạp một cách đơn giản.", related: "articulation (n)" },
+        { word: "bolster", ipa: "/ˈbəʊl.stər/", type: "v", meanings: ["củng cố", "tăng cường", "hỗ trợ mạnh mẽ", "nâng đỡ"], example: "Strong exports helped bolster the local economy.", exampleVi: "Xuất khẩu mạnh mẽ đã giúp củng cố nền kinh tế địa phương.", related: "" },
+        { word: "candid", ipa: "/ˈkæn.dɪd/", type: "adj", meanings: ["thẳng thắn", "chân thật", "bộc trực", "thành thật"], example: "I appreciate your candid feedback on my presentation.", exampleVi: "Tôi đánh giá cao những góp ý thẳng thắn của bạn về bài thuyết trình của tôi.", related: "candidly (adv), candor (n)" },
+        { word: "coherent", ipa: "/kəʊˈhɪə.rənt/", type: "adj", meanings: ["mạch lạc", "chặt chẽ", "nhất quán", "rõ ràng"], example: "Her essay presented a clear and coherent argument.", exampleVi: "Bài luận của cô ấy trình bày một lập luận rõ ràng và mạch lạc.", related: "coherence (n), coherently (adv), incoherent (adj)" },
+        { word: "compelling", ipa: "/kəmˈpel.ɪŋ/", type: "adj", meanings: ["thuyết phục", "hấp dẫn", "cuốn hút", "không thể cưỡng lại"], example: "The documentary makes a compelling case for ocean conservation.", exampleVi: "Bộ phim tài liệu đưa ra một lập luận đầy thuyết phục cho việc bảo tồn đại dương.", related: "compel (v)" },
+        { word: "complacent", ipa: "/kəmˈpleɪ.sənt/", type: "adj", meanings: ["tự mãn", "chủ quan", "thỏa mãn quá sớm"], example: "We cannot afford to become complacent after one success.", exampleVi: "Chúng ta không được phép tự mãn sau một thành công duy nhất.", related: "complacency (n)" },
+        { word: "concur", ipa: "/kənˈkɜːr/", type: "v", meanings: ["đồng tình", "đồng ý", "nhất trí", "trùng hợp"], example: "Most economists concur that inflation is slowing down.", exampleVi: "Hầu hết các nhà kinh tế đều đồng tình rằng lạm phát đang chậm lại.", related: "concurrence (n), concurrent (adj)" },
+        { word: "conducive", ipa: "/kənˈdjuː.sɪv/", type: "adj", meanings: ["có lợi cho", "tạo điều kiện", "thuận lợi cho"], example: "A quiet room is conducive to deep concentration.", exampleVi: "Một căn phòng yên tĩnh tạo điều kiện thuận lợi cho sự tập trung sâu.", related: "" },
+        { word: "corroborate", ipa: "/kəˈrɒb.ə.reɪt/", type: "v", meanings: ["chứng thực", "xác nhận", "củng cố bằng chứng"], example: "Two independent witnesses corroborated her account.", exampleVi: "Hai nhân chứng độc lập đã xác nhận lời kể của cô ấy.", related: "corroboration (n)" },
+        { word: "credible", ipa: "/ˈkred.ə.bəl/", type: "adj", meanings: ["đáng tin cậy", "có uy tín", "thuyết phục"], example: "Always verify news using credible sources.", exampleVi: "Hãy luôn kiểm chứng tin tức bằng các nguồn đáng tin cậy.", related: "credibility (n), incredible (adj)" },
+        { word: "deteriorate", ipa: "/dɪˈtɪə.ri.ə.reɪt/", type: "v", meanings: ["xấu đi", "suy thoái", "xuống cấp", "trầm trọng hơn"], example: "Air quality tends to deteriorate during dry winters.", exampleVi: "Chất lượng không khí có xu hướng xấu đi trong những mùa đông khô hanh.", related: "deterioration (n)" },
+        { word: "discrepancy", ipa: "/dɪˈskrep.ən.si/", type: "n", meanings: ["sự khác biệt", "sự chênh lệch", "sự mâu thuẫn", "sai lệch"], example: "The audit revealed a minor discrepancy in the budget.", exampleVi: "Cuộc kiểm toán phát hiện một sự chênh lệch nhỏ trong ngân sách.", related: "" },
+        { word: "eloquent", ipa: "/ˈel.ə.kwənt/", type: "adj", meanings: ["hùng biện", "lưu loát", "truyền cảm", "khéo nói"], example: "She delivered an eloquent speech at the graduation ceremony.", exampleVi: "Cô ấy đã có một bài phát biểu đầy truyền cảm tại lễ tốt nghiệp.", related: "eloquence (n), eloquently (adv)" },
+        { word: "ephemeral", ipa: "/ɪˈfem.ər.əl/", type: "adj", meanings: ["phù du", "ngắn ngủi", "thoáng qua", "chóng tàn"], example: "Viral trends on social media are often ephemeral.", exampleVi: "Các xu hướng lan truyền trên mạng xã hội thường rất ngắn ngủi.", related: "" },
+        { word: "exacerbate", ipa: "/ɪɡˈzæs.ə.beɪt/", type: "v", meanings: ["làm trầm trọng thêm", "làm tồi tệ hơn", "khoét sâu"], example: "Poor urban planning can exacerbate flooding.", exampleVi: "Quy hoạch đô thị kém có thể làm trầm trọng thêm tình trạng ngập lụt.", related: "exacerbation (n)" },
+        { word: "feasible", ipa: "/ˈfiː.zə.bəl/", type: "adj", meanings: ["khả thi", "có thể thực hiện được"], example: "The engineers confirmed that the design is technically feasible.", exampleVi: "Các kỹ sư xác nhận rằng thiết kế này khả thi về mặt kỹ thuật.", related: "feasibility (n), infeasible (adj)" },
+        { word: "fluctuate", ipa: "/ˈflʌk.tʃu.eɪt/", type: "v", meanings: ["dao động", "biến động", "lên xuống thất thường"], example: "Fuel prices fluctuate depending on global demand.", exampleVi: "Giá nhiên liệu dao động tùy thuộc vào nhu cầu toàn cầu.", related: "fluctuation (n)" },
+        { word: "foster", ipa: "/ˈfɒs.tər/", type: "v", meanings: ["thúc đẩy", "nuôi dưỡng", "bồi dưỡng", "khuyến khích"], example: "Open workshops help foster creativity among students.", exampleVi: "Các buổi hội thảo mở giúp nuôi dưỡng sự sáng tạo ở sinh viên.", related: "" },
+        { word: "impartial", ipa: "/ɪmˈpɑːr.ʃəl/", type: "adj", meanings: ["công bằng", "vô tư", "khách quan", "không thiên vị"], example: "A judge must remain completely impartial.", exampleVi: "Một thẩm phán phải giữ thái độ hoàn toàn vô tư khách quan.", related: "impartiality (n), impartially (adv), partial (adj)" },
+        { word: "imperative", ipa: "/ɪmˈper.ə.tɪv/", type: "adj, n", meaningsByType: { adj: ["cấp bách", "bắt buộc", "cần thiết tuyệt đối"], n: ["mệnh lệnh", "điều bắt buộc"] }, meanings: ["cấp bách", "bắt buộc", "cần thiết", "điều bắt buộc"], example: "It is imperative that we back up the database daily.", exampleVi: "Việc sao lưu cơ sở dữ liệu hàng ngày là điều bắt buộc.", related: "" },
+        { word: "inadvertently", ipa: "/ˌɪn.ədˈvɜːr.tənt.li/", type: "adv", meanings: ["vô tình", "không cố ý", "sơ ý", "ngẫu nhiên"], example: "He inadvertently deleted the shared folder.", exampleVi: "Anh ấy đã vô tình xóa mất thư mục dùng chung.", related: "inadvertent (adj)" },
+        { word: "incentive", ipa: "/ɪnˈsen.tɪv/", type: "n", meanings: ["động lực", "khích lệ", "ưu đãi", "phần thưởng khuyến khích"], example: "Tax breaks provide a strong incentive for green startups.", exampleVi: "Ưu đãi thuế tạo động lực mạnh mẽ cho các công ty khởi nghiệp xanh.", related: "incentivize (v)" },
+        { word: "inherent", ipa: "/ɪnˈher.ənt/", type: "adj", meanings: ["vốn có", "cố hữu", "tiềm ẩn", "nội tại"], example: "Every investment carries some inherent risk.", exampleVi: "Mọi khoản đầu tư đều tiềm ẩn một số rủi ro vốn có.", related: "inherently (adv)" },
+        { word: "intricate", ipa: "/ˈɪn.trɪ.kət/", type: "adj", meanings: ["phức tạp", "tinh xảo", "rắc rối", "cầu kỳ"], example: "The imperial palace is famous for its intricate carvings.", exampleVi: "Hoàng thành nổi tiếng với những đường chạm khắc tinh xảo.", related: "intricacy (n), intricately (adv)" },
+        { word: "lucrative", ipa: "/ˈluː.krə.tɪv/", type: "adj", meanings: ["sinh lợi", "có lợi nhuận cao", "béo bở", "kiếm bộn tiền"], example: "Cloud engineering has become a lucrative career path.", exampleVi: "Kỹ thuật đám mây đã trở thành một con đường sự nghiệp có thu nhập cao.", related: "" },
+        { word: "nuance", ipa: "/ˈnjuː.ɑːns/", type: "n", meanings: ["sắc thái", "sự khác biệt tinh tế", "nét tinh tế"], example: "Translating poetry requires understanding subtle cultural nuances.", exampleVi: "Dịch thơ đòi hỏi phải hiểu được những sắc thái văn hóa tinh tế.", related: "nuanced (adj)" },
+        { word: "obsolete", ipa: "/ˌɒb.səlˈiːt/", type: "adj", meanings: ["lỗi thời", "lạc hậu", "không còn dùng nữa"], example: "Rapid innovation can make hardware obsolete within years.", exampleVi: "Sự đổi mới nhanh chóng có thể khiến phần cứng trở nên lỗi thời chỉ trong vài năm.", related: "obsolescence (n)" },
+        { word: "paradigm", ipa: "/ˈpær.ə.daɪm/", type: "n", meanings: ["mô hình", "hệ hình", "kiểu mẫu", "khuôn mẫu"], example: "Cloud computing introduced a new paradigm in software delivery.", exampleVi: "Điện toán đám mây đã mở ra một mô hình mới trong việc cung cấp phần mềm.", related: "paradigmatic (adj)" },
+        { word: "pragmatic", ipa: "/præɡˈmæt.ɪk/", type: "adj", meanings: ["thực tế", "thực dụng", "thiết thực"], example: "We need a pragmatic approach that fits our current budget.", exampleVi: "Chúng ta cần một cách tiếp cận thực tế phù hợp với ngân sách hiện tại.", related: "pragmatism (n), pragmatically (adv)" },
+        { word: "prevalent", ipa: "/ˈprev.əl.ənt/", type: "adj", meanings: ["phổ biến", "thịnh hành", "lan rộng"], example: "Remote work has become much more prevalent worldwide.", exampleVi: "Làm việc từ xa đã trở nên phổ biến hơn nhiều trên toàn thế giới.", related: "prevalence (n)" },
+        { word: "resilient", ipa: "/rɪˈzɪl.jənt/", type: "adj", meanings: ["kiên cường", "bền bỉ", "có sức phục hồi nhanh", "dẻo dai"], example: "A resilient system recovers smoothly after a power outage.", exampleVi: "Một hệ thống bền bỉ sẽ phục hồi trơn tru sau khi mất điện.", related: "resilience (n)" },
+        { word: "scrutinize", ipa: "/ˈskruː.tɪ.naɪz/", type: "v", meanings: ["xem xét kỹ lưỡng", "soi xét", "kiểm tra kỹ"], example: "Reviewers scrutinize every citation before publication.", exampleVi: "Người phản biện xem xét kỹ lưỡng từng trích dẫn trước khi xuất bản.", related: "scrutiny (n)" },
+        { word: "stringent", ipa: "/ˈstrɪn.dʒənt/", type: "adj", meanings: ["nghiêm ngặt", "khắt khe", "chặt chẽ"], example: "Airlines follow stringent safety regulations.", exampleVi: "Các hãng hàng không tuân thủ các quy định an toàn nghiêm ngặt.", related: "stringently (adv)" },
+        { word: "subtle", ipa: "/ˈsʌt.əl/", type: "adj", meanings: ["tinh tế", "tinh vi", "nhẹ nhàng", "khó nhận thấy"], example: "There is a subtle difference between these two synonyms.", exampleVi: "Có một sự khác biệt tinh tế giữa hai từ đồng nghĩa này.", related: "subtlety (n), subtly (adv)" },
+        { word: "tentative", ipa: "/ˈten.tə.tɪv/", type: "adj", meanings: ["tạm thời", "dự kiến", "thăm dò", "do dự"], example: "We have set a tentative date for the workshop.", exampleVi: "Chúng tôi đã đặt một ngày dự kiến cho buổi hội thảo.", related: "tentatively (adv)" },
+        { word: "ubiquitous", ipa: "/juːˈbɪk.wɪ.təs/", type: "adj", meanings: ["phổ biến khắp nơi", "có mặt ở khắp nơi", "đâu đâu cũng có"], example: "Smartphones have become ubiquitous in modern daily life.", exampleVi: "Điện thoại thông minh đã có mặt ở khắp mọi nơi trong đời sống hiện đại.", related: "ubiquity (n)" }
+      ]
+    };
+
+    /* Thông tin hiển thị cho 5 trình độ CEFR */
+    const LEVEL_META = [
+      { id: "A1", name: "A1 – Sơ cấp", desc: "Từ vựng cơ bản đời sống", color: "var(--c-a1)" },
+      { id: "A2", name: "A2 – Cơ bản", desc: "Từ vựng thường gặp hằng ngày", color: "var(--c-a2)" },
+      { id: "B1", name: "B1 – Trung cấp", desc: "Từ trừu tượng đơn giản", color: "var(--c-b1)" },
+      { id: "B2", name: "B2 – Trung cao cấp", desc: "Từ vựng học thuật nhẹ", color: "var(--c-b2)" },
+      { id: "C1", name: "C1 – Cao cấp", desc: "Từ vựng học thuật nâng cao", color: "var(--c-c1)" }
+    ];
+
+    /* Bảng quy đổi ký hiệu từ loại sang tiếng Việt đầy đủ */
+    const POS_LABELS = {
+      n: "Danh từ (n)",
+      v: "Động từ (v)",
+      adj: "Tính từ (adj)",
+      adv: "Trạng từ (adv)",
+      prep: "Giới từ (prep)",
+      conj: "Liên từ (conj)",
+      pron: "Đại từ (pron)"
+    };
+
+    /* Danh sách từ hư/từ nối tiếng Việt không dùng để tính trùng từ khóa quan trọng */
+    const VI_STOPWORDS = new Set([
+      "su", "viec", "lam", "co", "khong", "bi", "duoc", "nguoi", "cai", "con",
+      "mot", "nhung", "cac", "cua", "cho", "voi", "ve", "trong", "ngoai", "ra",
+      "vao", "len", "xuong", "lai", "di", "den", "tu", "hay", "hoac", "va",
+      "la", "o", "tai", "rat", "kha", "hoi", "nhieu", "it", "tinh", "cach",
+      "do", "nay", "kia", "mot", "khi", "ma", "de", "nhu", "the", "bi", "qua"
+    ]);
+
+    const QUESTIONS_PER_ROUND = 10;
+    const STORAGE_KEY = "vocab_cefr_best_scores_v1";
+
+    /* =====================================================================
+       PHẦN 2: THUẬT TOÁN CHUẨN HÓA & CHẤM ĐIỂM (ĐÚNG / GẦN ĐÚNG / SAI)
+       ===================================================================== */
+
+    /** Chuẩn hóa chuỗi tiếng Việt: chữ thường, bỏ dấu, bỏ dấu câu, gom khoảng trắng */
+    function normalizeVietnamese(str) {
+      if (!str) return "";
+      return String(str)
+        .toLowerCase()
+        .replace(/đ/g, "d")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    /** Thoát ký tự đặc biệt khi tạo RegExp */
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    /** Tính khoảng cách chỉnh sửa Levenshtein giữa 2 chuỗi */
+    function levenshtein(a, b) {
+      const m = a.length;
+      const n = b.length;
+      if (m === 0) return n;
+      if (n === 0) return m;
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 0; i <= m; i++) dp[i][0] = i;
+      for (let j = 0; j <= n; j++) dp[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1,      // xóa
+            dp[i][j - 1] + 1,      // chèn
+            dp[i - 1][j - 1] + cost // thay thế
+          );
+        }
+      }
+      return dp[m][n];
+    }
+
+    /** Lấy toàn bộ danh sách nghĩa chấp nhận được của một từ */
+    function getAllAcceptableMeanings(wordObj) {
+      const list = [];
+      if (Array.isArray(wordObj.meanings)) {
+        list.push(...wordObj.meanings);
+      }
+      if (wordObj.meaningsByType && typeof wordObj.meaningsByType === "object") {
+        Object.values(wordObj.meaningsByType).forEach(arr => {
+          if (Array.isArray(arr)) list.push(...arr);
+        });
+      }
+      // Lọc trùng giữ nguyên thứ tự
+      return Array.from(new Set(list.filter(Boolean)));
+    }
+
+    /** Trích xuất các từ quan trọng (bỏ từ nối/hư từ) */
+    function getImportantTokens(normStr) {
+      return normStr
+        .split(" ")
+        .filter(tok => tok.length >= 2 && !VI_STOPWORDS.has(tok));
+    }
+
+    /**
+     * Chấm điểm câu trả lời của người dùng:
+     * - "correct" (1 điểm): trùng hoàn toàn hoặc chứa một nghĩa chấp nhận được (tính theo ranh giới từ)
+     * - "almost"  (0.5 điểm): lệch 1-2 ký tự theo Levenshtein hoặc trùng từ khóa quan trọng trong nghĩa nhiều từ
+     * - "wrong"   (0 điểm): các trường hợp còn lại
+     */
+    function gradeAnswer(rawInput, wordObj) {
+      const trimmed = (rawInput || "").trim();
+      if (!trimmed) return { status: "wrong", points: 0 };
+
+      // Tách nhiều nghĩa cách nhau bằng dấu phẩy, chấm phẩy hoặc gạch chéo
+      const rawSegments = trimmed.split(/[,;/\n]+/).map(s => normalizeVietnamese(s)).filter(Boolean);
+      const fullNorm = normalizeVietnamese(trimmed);
+      const candidates = Array.from(new Set([...rawSegments, fullNorm])).filter(Boolean);
+
+      if (candidates.length === 0) return { status: "wrong", points: 0 };
+
+      const acceptableNorms = getAllAcceptableMeanings(wordObj)
+        .map(m => normalizeVietnamese(m))
+        .filter(Boolean);
+
+      // 1. Kiểm tra ĐÚNG (trùng khớp hoặc chứa trọn vẹn một nghĩa chấp nhận được)
+      for (const cand of candidates) {
+        for (const meaning of acceptableNorms) {
+          if (cand === meaning) {
+            return { status: "correct", points: 1 };
+          }
+          if (meaning.length >= 2) {
+            const pattern = new RegExp(`(?:^|\\s)${escapeRegExp(meaning)}(?:\\s|$)`);
+            if (pattern.test(cand)) {
+              return { status: "correct", points: 1 };
+            }
+          }
+        }
+      }
+
+      // 2. Kiểm tra GẦN ĐÚNG (Levenshtein hoặc trùng từ khóa quan trọng)
+      for (const cand of candidates) {
+        if (cand.length < 2) continue;
+        const candTokens = getImportantTokens(cand);
+
+        for (const meaning of acceptableNorms) {
+          const maxLen = Math.max(cand.length, meaning.length);
+          const dist = levenshtein(cand, meaning);
+
+          // Ngưỡng sai khác ký tự linh hoạt theo độ dài từ
+          const maxAllowedDist = maxLen <= 2 ? 0 : (maxLen <= 5 ? 1 : (maxLen <= 10 ? 2 : 3));
+          if (maxAllowedDist > 0 && dist <= maxAllowedDist) {
+            return { status: "almost", points: 0.5 };
+          }
+
+          // Kiểm tra trùng ít nhất một từ quan trọng trong cụm nghĩa nhiều từ
+          const meaningTokens = getImportantTokens(meaning);
+          if (meaningTokens.length >= 2 && candTokens.length >= 1) {
+            const hasOverlap = candTokens.some(t => t.length >= 3 && meaningTokens.includes(t));
+            if (hasOverlap) {
+              return { status: "almost", points: 0.5 };
+            }
+          }
+        }
+      }
+
+      // 3. Các trường hợp còn lại là SAI
+      return { status: "wrong", points: 0 };
+    }
+
+/* =====================================================================
+       PHẦN 3: LƯU TRỮ, KHO TỪ MỞ RỘNG & HỆ THỐNG NẠP TỪ VÔ HẠN (ONLINE/OFFLINE)
+       ===================================================================== */
+    const EXTRA_BANK_KEY = "vocab_cefr_extra_bank_v1";
+    const SEEN_WORDS_KEY = "vocab_cefr_seen_words_v1";
+    const INFINITE_BEST_KEY = "vocab_cefr_infinite_best_v1";
+
+    /* Bộ chủ đề & dải tần suất từ (occurrences/million từ Datamuse) để sinh từ mới đúng chuẩn CEFR */
+    const CEFR_ONLINE_CONFIG = {
+      A1: {
+        minFreq: 42,
+        maxFreq: 50000,
+        seeds: [
+          "food", "house", "family", "school", "color", "animal", "weather", "body",
+          "clothes", "fruit", "drink", "sport", "morning", "room", "shop", "street",
+          "park", "book", "music", "game", "garden", "kitchen", "friend", "child",
+          "car", "train", "summer", "winter", "smile", "table"
+        ]
+      },
+      A2: {
+        minFreq: 14,
+        maxFreq: 55,
+        seeds: [
+          "holiday", "journey", "airport", "hotel", "restaurant", "health", "hospital",
+          "traffic", "festival", "movie", "hobby", "concert", "museum", "library",
+          "bicycle", "message", "gift", "party", "recipe", "luggage", "market",
+          "neighbor", "weather", "promise", "camera", "bridge", "island", "office"
+        ]
+      },
+      B1: {
+        minFreq: 4.5,
+        maxFreq: 22,
+        seeds: [
+          "environment", "education", "technology", "culture", "career", "society",
+          "communication", "habit", "community", "volunteer", "tradition", "science",
+          "economy", "media", "ambition", "adventure", "confidence", "creativity",
+          "solution", "challenge", "opinion", "pollution", "energy", "fitness",
+          "relationship", "memory", "opportunity", "schedule"
+        ]
+      },
+      B2: {
+        minFreq: 1.2,
+        maxFreq: 7.5,
+        seeds: [
+          "sustainability", "innovation", "policy", "psychology", "research", "strategy",
+          "ethics", "infrastructure", "productivity", "conflict", "leadership", "evidence",
+          "analysis", "regulation", "negotiation", "priority", "perspective", "efficiency",
+          "diversity", "consequence", "flexibility", "investment", "architecture", "climate",
+          "collaboration", "controversy", "automation", "migration"
+        ]
+      },
+      C1: {
+        minFreq: 0.12,
+        maxFreq: 2.2,
+        seeds: [
+          "epistemology", "governance", "rhetoric", "nuance", "resilience", "diplomacy",
+          "jurisprudence", "aesthetics", "cognition", "paradigm", "scrutiny", "volatility",
+          "equity", "pragmatism", "bureaucracy", "discourse", "ambiguity", "mitigation",
+          "integrity", "autonomy", "consensus", "incentive", "coherence", "precedent",
+          "catalyst", "discrepancy", "eloquence", "ubiquity"
+        ]
+      }
+    };
+
+    const API_POS_MAP = {
+      noun: "n",
+      verb: "v",
+      adjective: "adj",
+      adverb: "adv",
+      preposition: "prep",
+      conjunction: "conj",
+      pronoun: "pron"
+    };
+
+    function safeReadJSON(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function safeWriteJSON(key, value) {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        // Bỏ qua nếu trình duyệt không cho phép lưu trữ
+      }
+    }
+
+    function loadBestScores() {
+      return safeReadJSON(STORAGE_KEY, {});
+    }
+
+    function saveBestScore(level, score) {
+      const scores = loadBestScores();
+      const prev = typeof scores[level] === "number" ? scores[level] : -1;
+      const isNewRecord = score > prev;
+      if (isNewRecord) {
+        scores[level] = score;
+        safeWriteJSON(STORAGE_KEY, scores);
+      }
+      return { isNewRecord, best: Math.max(prev, score) };
+    }
+
+    function loadInfiniteBest() {
+      return safeReadJSON(INFINITE_BEST_KEY, {});
+    }
+
+    function saveInfiniteBest(level, score) {
+      const scores = loadInfiniteBest();
+      const prev = typeof scores[level] === "number" ? scores[level] : -1;
+      const isNewRecord = score > prev;
+      if (isNewRecord) {
+        scores[level] = score;
+        safeWriteJSON(INFINITE_BEST_KEY, scores);
+      }
+      return { isNewRecord, best: Math.max(prev, score) };
+    }
+
+    function loadExtraBank() {
+      return safeReadJSON(EXTRA_BANK_KEY, { A1: [], A2: [], B1: [], B2: [], C1: [] });
+    }
+
+    function saveExtraWord(level, wordObj) {
+      const extra = loadExtraBank();
+      if (!Array.isArray(extra[level])) extra[level] = [];
+      const exists = getLevelBank(level).some(w => w.word.toLowerCase() === wordObj.word.toLowerCase());
+      if (!exists) {
+        extra[level].push(wordObj);
+        safeWriteJSON(EXTRA_BANK_KEY, extra);
+        return true;
+      }
+      return false;
+    }
+
+    /** Trả về toàn bộ kho từ (mặc định + từ đã nạp trực tuyến + từ người dùng thêm) */
+    function getLevelBank(level) {
+      const base = VOCAB_BANK[level] || [];
+      const extra = (loadExtraBank()[level] || []);
+      const seen = new Set();
+      const merged = [];
+      for (const item of [...base, ...extra]) {
+        const key = String(item.word || "").toLowerCase();
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          merged.push(item);
+        }
+      }
+      return merged;
+    }
+
+    function loadSeenWords() {
+      return safeReadJSON(SEEN_WORDS_KEY, { A1: [], A2: [], B1: [], B2: [], C1: [] });
+    }
+
+    function markWordSeen(level, word) {
+      const seen = loadSeenWords();
+      if (!Array.isArray(seen[level])) seen[level] = [];
+      const lower = String(word || "").toLowerCase();
+      if (!seen[level].includes(lower)) {
+        seen[level].push(lower);
+        safeWriteJSON(SEEN_WORDS_KEY, seen);
+      }
+    }
+
+    function resetSeenWords(level) {
+      const seen = loadSeenWords();
+      seen[level] = [];
+      safeWriteJSON(SEEN_WORDS_KEY, seen);
+    }
+
+    /** Gọi fetch có giới hạn thời gian để không làm treo ứng dụng khi mạng yếu */
+    async function fetchJSONWithTimeout(url, timeoutMs = 6500) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return await res.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    /** Dịch chuỗi tiếng Anh sang tiếng Việt bằng MyMemory API (miễn phí, không cần khóa) */
+    async function translateEnToVi(text, collectVariants = false) {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|vi`;
+      const data = await fetchJSONWithTimeout(url, 6500);
+      const primary = data && data.responseData && data.responseData.translatedText
+        ? String(data.responseData.translatedText).trim()
+        : "";
+
+      if (!collectVariants) return primary;
+
+      const variants = [];
+      const pushClean = (val) => {
+        if (!val) return;
+        const cleaned = String(val)
+          .replace(/\(.*?\)/g, "")
+          .replace(/["'“”]/g, "")
+          .trim();
+        // Loại bỏ kết quả lỗi hoặc vẫn giữ nguyên tiếng Anh
+        if (cleaned.length >= 2 && cleaned.length <= 45 && cleaned.toLowerCase() !== text.toLowerCase() && !cleaned.includes("MYMEMORY WARNING")) {
+          cleaned.split(/[,;/]+/).forEach(part => {
+            const p = part.trim().toLowerCase();
+            if (p.length >= 2 && !variants.includes(p)) variants.push(p);
+          });
+        }
+      };
+
+      pushClean(primary);
+      if (Array.isArray(data && data.matches)) {
+        for (const m of data.matches) {
+          if (m && m.translation && Number(m.match || 0) >= 0.7) {
+            pushClean(m.translation);
+          }
+        }
+      }
+      return variants.slice(0, 6);
+    }
+
+    /** Làm giàu 1 từ tiếng Anh bằng Free Dictionary API + dịch tiếng Việt */
+    async function buildWordEntryFromAPI(word) {
+      const dictData = await fetchJSONWithTimeout(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`,
+        6000
+      );
+      if (!Array.isArray(dictData) || !dictData[0]) return null;
+      const entry = dictData[0];
+
+      // Lấy phiên âm IPA
+      let ipa = entry.phonetic || "";
+      if (!ipa && Array.isArray(entry.phonetics)) {
+        const p = entry.phonetics.find(x => x && x.text);
+        if (p) ipa = p.text;
+      }
+      if (!ipa) ipa = `/${word}/`;
+
+      // Lấy tất cả từ loại và câu ví dụ
+      const posList = [];
+      let example = "";
+      const relatedSet = new Set();
+
+      if (Array.isArray(entry.meanings)) {
+        for (const m of entry.meanings) {
+          const shortPos = API_POS_MAP[String(m.partOfSpeech || "").toLowerCase()];
+          if (shortPos && !posList.includes(shortPos)) posList.push(shortPos);
+          if (Array.isArray(m.synonyms)) {
+            m.synonyms.slice(0, 3).forEach(s => {
+              if (/^[a-zA-Z-]+$/.test(s)) relatedSet.add(s);
+            });
+          }
+          if (!example && Array.isArray(m.definitions)) {
+            const withEx = m.definitions.find(d => d && d.example);
+            if (withEx) example = withEx.example;
+          }
+        }
+      }
+
+      if (posList.length === 0) posList.push("n");
+      if (!example) example = `We learned the word "${word}" today.`;
+
+      // Dịch nghĩa tiếng Việt + bản dịch câu ví dụ song song
+      const [meanings, exampleVi] = await Promise.all([
+        translateEnToVi(word, true),
+        translateEnToVi(example, false)
+      ]);
+
+      if (!Array.isArray(meanings) || meanings.length === 0) return null;
+
+      return {
+        word,
+        ipa,
+        type: posList.join(", "),
+        meanings,
+        example,
+        exampleVi: exampleVi || "Ví dụ minh họa cách dùng từ trong ngữ cảnh.",
+        related: Array.from(relatedSet).slice(0, 4).join(", "),
+        source: "online"
+      };
+    }
+
+    const activeFetchLocks = {};
+
+    /**
+     * Nạp thêm từ tiếng Anh mới trực tuyến đúng trình độ CEFR từ Datamuse + Dictionary + MyMemory
+     * Trả về danh sách các từ mới nạp thành công (không bao giờ ném lỗi ra ngoài)
+     */
+    async function fetchMoreWordsOnline(level, targetCount = 4) {
+      if (activeFetchLocks[level]) return [];
+      activeFetchLocks[level] = true;
+      const cfg = CEFR_ONLINE_CONFIG[level] || CEFR_ONLINE_CONFIG.B1;
+      const added = [];
+
+      try {
+        const existingSet = new Set(getLevelBank(level).map(w => w.word.toLowerCase()));
+        // Chọn ngẫu nhiên 2 chủ đề khác nhau để nguồn từ luôn mới mẻ
+        const shuffledSeeds = shuffleArray(cfg.seeds);
+        const seed1 = shuffledSeeds[0];
+        const randomLetter = "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
+
+        const queryUrls = [
+          `https://api.datamuse.com/words?ml=${encodeURIComponent(seed1)}&md=fp&max=80`,
+          `https://api.datamuse.com/words?sp=${randomLetter}???*&md=fp&max=80`
+        ];
+
+        let candidates = [];
+        for (const qUrl of queryUrls) {
+          try {
+            const list = await fetchJSONWithTimeout(qUrl, 6000);
+            if (Array.isArray(list)) {
+              for (const item of list) {
+                const w = String(item.word || "").toLowerCase();
+                if (!/^[a-z]{3,14}$/.test(w)) continue;
+                if (existingSet.has(w)) continue;
+                const tags = Array.isArray(item.tags) ? item.tags : [];
+                const freqTag = tags.find(t => t.startsWith("f:"));
+                const freq = freqTag ? parseFloat(freqTag.slice(2)) : 0;
+                if (freq >= cfg.minFreq && freq <= cfg.maxFreq) {
+                  candidates.push(w);
+                }
+              }
+            }
+          } catch (e) {
+            // Thử truy vấn tiếp theo
+          }
+          if (candidates.length >= targetCount * 3) break;
+        }
+
+        candidates = shuffleArray(Array.from(new Set(candidates))).slice(0, targetCount * 3);
+
+        for (const cand of candidates) {
+          if (added.length >= targetCount) break;
+          try {
+            const entry = await buildWordEntryFromAPI(cand);
+            if (entry && saveExtraWord(level, entry)) {
+              added.push(entry);
+            }
+          } catch (e) {
+            // Bỏ qua từ không tra được, tiếp tục từ kế tiếp
+          }
+        }
+      } catch (e) {
+        // Ngoại tuyến hoặc API bị chặn -> giữ nguyên kho ngoại tuyến
+      } finally {
+        activeFetchLocks[level] = false;
+      }
+
+      return added;
+    }
+
+    /** Phát âm từ tiếng Anh bằng Web Speech API (en-US) */
+    function speakWord(text) {
+      if (!text) return;
+      try {
+        if (!("speechSynthesis" in window)) {
+          showToast("Trình duyệt không hỗ trợ phát âm tự động.");
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = 0.92;
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        showToast("Không thể phát âm lúc này.");
+      }
+    }
+
+    /** Rung nhẹ trên điện thoại khi trả lời sai */
+    function triggerErrorVibrate() {
+      try {
+        if (navigator && typeof navigator.vibrate === "function") {
+          navigator.vibrate([55, 35, 55]);
+        }
+      } catch (e) {
+        // Không làm gián đoạn nếu thiết bị không hỗ trợ rung
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    /* =====================================================================
+       PHẦN 4: QUẢN LÝ TRẠNG THÁI & ĐIỀU KHIỂN GIAO DIỆN
+       ===================================================================== */
+    const state = {
+      level: "A1",
+      mode: "infinite", // "infinite" | "standard10"
+      autoOnline: true,
+      isReviewMode: false,
+      questions: [],
+      sessionUsedWords: new Set(),
+      currentIndex: 0,
+      score: 0,
+      answered: false,
+      history: [] // { wordObj, userAnswer, status, points }
+    };
+
+    const elScreens = {
+      home: document.getElementById("screen-home"),
+      quiz: document.getElementById("screen-quiz"),
+      result: document.getElementById("screen-result")
+    };
+
+    const elLevelGrid = document.getElementById("level-grid");
+    const elQuizLevelBadge = document.getElementById("quiz-level-badge");
+    const elQuizProgressText = document.getElementById("quiz-progress-text");
+    const elQuizScoreText = document.getElementById("quiz-score-text");
+    const elProgressFill = document.getElementById("progress-fill");
+    const elSyncStatus = document.getElementById("sync-status");
+    const elBtnFinishInfinite = document.getElementById("btn-finish-infinite");
+    const elWordCard = document.getElementById("word-card");
+    const elWordDisplay = document.getElementById("word-display");
+    const elAnswerForm = document.getElementById("answer-form");
+    const elAnswerInput = document.getElementById("answer-input");
+    const elBtnCheck = document.getElementById("btn-check");
+    const elBtnSkip = document.getElementById("btn-skip");
+    const elBtnSpeak = document.getElementById("btn-speak");
+    const elFeedbackCard = document.getElementById("feedback-card");
+    const elNextWrap = document.getElementById("next-wrap");
+    const elBtnNext = document.getElementById("btn-next");
+    const elChkAutoOnline = document.getElementById("chk-auto-online");
+
+    function showScreen(name) {
+      Object.entries(elScreens).forEach(([key, node]) => {
+        node.classList.toggle("active", key === name);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /** Trộn mảng ngẫu nhiên theo thuật toán Fisher-Yates */
+    function shuffleArray(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /** Định dạng điểm gọn (ví dụ 7 hoặc 7.5) */
+    function formatScore(num) {
+      return Number.isInteger(num) ? String(num) : num.toFixed(1);
+    }
+
+    /** Chống chèn mã HTML khi hiển thị văn bản */
+    function escapeHTML(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    /** Tạo HTML hiển thị đầy đủ từ loại và nghĩa (hỗ trợ nhiều từ loại) */
+    function renderPosAndMeaningsHTML(wordObj) {
+      if (wordObj.meaningsByType && typeof wordObj.meaningsByType === "object") {
+        const entries = Object.entries(wordObj.meaningsByType);
+        return entries.map(([pos, list]) => {
+          const label = POS_LABELS[pos.trim()] || pos;
+          return `<div class="pos-item"><span class="pos-badge">${escapeHTML(label)}</span>${escapeHTML(list.join(", "))}</div>`;
+        }).join("");
+      }
+
+      const rawTypes = String(wordObj.type || "").split(",").map(t => t.trim()).filter(Boolean);
+      const labelText = rawTypes.map(t => POS_LABELS[t] || t).join(" / ");
+      const meaningsText = getAllAcceptableMeanings(wordObj).join(", ");
+      return `<div class="pos-item"><span class="pos-badge">${escapeHTML(labelText)}</span>${escapeHTML(meaningsText)}</div>`;
+    }
+
+    /** Vẽ màn hình chọn 5 trình độ */
+    function renderHomeScreen() {
+      const best10 = loadBestScores();
+      const bestInf = loadInfiniteBest();
+      const isInf = state.mode === "infinite";
+
+      document.getElementById("mode-infinite").classList.toggle("active", isInf);
+      document.getElementById("mode-infinite").setAttribute("aria-selected", String(isInf));
+      document.getElementById("mode-10").classList.toggle("active", !isInf);
+      document.getElementById("mode-10").setAttribute("aria-selected", String(!isInf));
+      document.getElementById("home-subtitle").textContent = isInf
+        ? "Chế độ Vô hạn: từ vựng không bao giờ hết, tự động nạp thêm từ mới"
+        : "Chế độ 10 từ chuẩn: kiểm tra nhanh 10 từ ngẫu nhiên không trùng lặp";
+
+      elLevelGrid.innerHTML = LEVEL_META.map(lvl => {
+        const bank = getLevelBank(lvl.id);
+        const count = bank.length;
+        const bestText = isInf
+          ? (typeof bestInf[lvl.id] === "number"
+              ? `<span class="best-tag">Kỷ lục ∞: ${formatScore(bestInf[lvl.id])}đ</span>`
+              : `<span>Chưa lập kỷ lục ∞</span>`)
+          : (typeof best10[lvl.id] === "number"
+              ? `<span class="best-tag">Cao nhất: ${formatScore(best10[lvl.id])}/10</span>`
+              : `<span>Chưa làm bài</span>`);
+
+        return `
+          <div class="level-card-wrap" style="--lvl-color:${lvl.color}">
+            <button class="level-btn" type="button" data-start-level="${lvl.id}">
+              <div class="level-pill">${lvl.id}</div>
+              <div class="level-info">
+                <div class="level-title">${lvl.name}</div>
+                <div class="level-meta">
+                  <span>${lvl.desc}</span>
+                  <span>• ${count}+ từ (∞)</span>
+                  <span>•</span>
+                  ${bestText}
+                </div>
+              </div>
+              <span class="level-arrow" aria-hidden="true">›</span>
+            </button>
+            <button class="level-fetch-btn" type="button" data-fetch-level="${lvl.id}" title="Tải thêm từ mới cho trình độ ${lvl.id}" aria-label="Tải thêm từ mới ${lvl.id}">
+              <span>🌐</span>
+              <span class="lbl">+Từ</span>
+            </button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    /** Lấy danh sách từ ưu tiên các từ chưa từng gặp (đảm bảo không bao giờ hết từ) */
+    function buildSmartBatch(level, count) {
+      const bank = getLevelBank(level);
+      const seenList = loadSeenWords()[level] || [];
+      const seenSet = new Set(seenList);
+
+      let unseen = bank.filter(w => !seenSet.has(w.word.toLowerCase()) && !state.sessionUsedWords.has(w.word.toLowerCase()));
+
+      // Nếu đã học hết vòng hiện tại -> mở khóa lại toàn bộ kho để tiếp tục không gián đoạn
+      if (unseen.length < count) {
+        if (bank.length > 0 && seenSet.size >= bank.length - 2) {
+          resetSeenWords(level);
+        }
+        const remaining = bank.filter(w => !state.sessionUsedWords.has(w.word.toLowerCase()));
+        if (remaining.length >= count) {
+          unseen = remaining;
+        } else {
+          // Nếu thậm chí đã đi qua toàn bộ kho trong 1 phiên cực dài -> xoay vòng mới
+          state.sessionUsedWords.clear();
+          unseen = bank;
+        }
+      }
+
+      const picked = shuffleArray(unseen).slice(0, Math.min(count, unseen.length));
+      picked.forEach(w => state.sessionUsedWords.add(w.word.toLowerCase()));
+      return picked;
+    }
+
+    /** Nạp ngầm thêm từ mới khi chơi chế độ Vô hạn để kho từ mở rộng liên tục */
+    async function triggerBackgroundPrefetch(level) {
+      if (!state.autoOnline || state.isReviewMode) return;
+      elSyncStatus.textContent = "🌐 Đang tự động nạp thêm từ mới vào kho...";
+      const added = await fetchMoreWordsOnline(level, 4);
+      if (added.length > 0) {
+        // Đưa thẳng các từ mới vừa nạp vào hàng đợi nếu đang ở chế độ vô hạn
+        if (state.mode === "infinite" && state.level === level && elScreens.quiz.classList.contains("active")) {
+          added.forEach(w => {
+            if (!state.sessionUsedWords.has(w.word.toLowerCase())) {
+              state.questions.push(w);
+              state.sessionUsedWords.add(w.word.toLowerCase());
+            }
+          });
+        }
+        elSyncStatus.textContent = `✨ Đã nạp thêm ${added.length} từ mới (Kho ${level}: ${getLevelBank(level).length} từ)`;
+        setTimeout(() => {
+          if (elSyncStatus.textContent.startsWith("✨")) elSyncStatus.textContent = "";
+        }, 3500);
+      } else {
+        elSyncStatus.textContent = "";
+      }
+    }
+
+    /** Bắt đầu một lượt kiểm tra mới (10 từ chuẩn, Vô hạn, hoặc Ôn lại từ sai) */
+    function startSession(level, customWords = null) {
+      state.level = level;
+      state.isReviewMode = Array.isArray(customWords) && customWords.length > 0;
+      state.sessionUsedWords = new Set();
+      document.body.setAttribute("data-level", level);
+
+      if (state.isReviewMode) {
+        state.questions = shuffleArray(customWords);
+      } else if (state.mode === "infinite") {
+        state.questions = buildSmartBatch(level, 12);
+      } else {
+        state.questions = buildSmartBatch(level, QUESTIONS_PER_ROUND);
+      }
+
+      state.currentIndex = 0;
+      state.score = 0;
+      state.history = [];
+      state.answered = false;
+      elSyncStatus.textContent = "";
+
+      const isInfRun = !state.isReviewMode && state.mode === "infinite";
+      elQuizLevelBadge.textContent = state.isReviewMode
+        ? `Ôn tập ${level}`
+        : (isInfRun ? `${level} • ∞` : level);
+      elBtnFinishInfinite.style.display = isInfRun ? "inline-flex" : "none";
+
+      showScreen("quiz");
+      renderCurrentQuestion();
+
+      // Chủ động nạp ngầm thêm từ mới ngay khi bắt đầu chế độ vô hạn
+      if (isInfRun && state.autoOnline) {
+        triggerBackgroundPrefetch(level);
+      }
+    }
+
+    /** Hiển thị câu hỏi hiện tại */
+    function renderCurrentQuestion() {
+      const isInfRun = !state.isReviewMode && state.mode === "infinite";
+
+      // Đảm bảo chế độ Vô hạn luôn có câu kế tiếp sẵn sàng
+      if (isInfRun && state.currentIndex >= state.questions.length - 3) {
+        const more = buildSmartBatch(state.level, 10);
+        state.questions.push(...more);
+        if (state.autoOnline) {
+          triggerBackgroundPrefetch(state.level);
+        }
+      }
+
+      const total = state.questions.length;
+      const item = state.questions[state.currentIndex];
+      state.answered = false;
+
+      if (isInfRun) {
+        elQuizProgressText.textContent = `Câu #${state.currentIndex + 1} / ∞`;
+        const acc = state.history.length > 0 ? Math.min(100, (state.score / state.history.length) * 100) : 100;
+        elProgressFill.style.width = `${Math.max(12, acc)}%`;
+      } else {
+        elQuizProgressText.textContent = `${state.currentIndex + 1}/${total}`;
+        elProgressFill.style.width = `${(state.currentIndex / total) * 100}%`;
+      }
+
+      elQuizScoreText.textContent = `Điểm: ${formatScore(state.score)}`;
+
+      elWordDisplay.innerHTML = `${escapeHTML(item.word)}${item.source === "online" ? '<span class="word-source-tag">🌐 Mới</span>' : ""}`;
+      elWordCard.classList.remove("shake");
+
+      elAnswerInput.value = "";
+      elAnswerInput.disabled = false;
+      elBtnCheck.disabled = false;
+      elBtnSkip.disabled = false;
+
+      elFeedbackCard.className = "feedback-card";
+      elFeedbackCard.innerHTML = "";
+      elNextWrap.classList.remove("show");
+
+      setTimeout(() => {
+        elAnswerInput.focus({ preventScroll: false });
+      }, 60);
+    }
+
+    /** Xử lý khi người dùng bấm Kiểm tra hoặc Bỏ qua */
+    function handleSubmission(isSkip = false) {
+      if (state.answered) return;
+
+      const item = state.questions[state.currentIndex];
+      const userAnswer = isSkip ? "" : elAnswerInput.value.trim();
+
+      if (!isSkip && !userAnswer) {
+        showToast("Hãy nhập nghĩa tiếng Việt hoặc bấm Bỏ qua.");
+        elAnswerInput.focus();
+        return;
+      }
+
+      const result = isSkip ? { status: "wrong", points: 0 } : gradeAnswer(userAnswer, item);
+      state.answered = true;
+      state.score += result.points;
+      markWordSeen(state.level, item.word);
+
+      state.history.push({
+        wordObj: item,
+        userAnswer: isSkip ? "(Đã bỏ qua)" : userAnswer,
+        status: result.status,
+        points: result.points
+      });
+
+      const isInfRun = !state.isReviewMode && state.mode === "infinite";
+      const total = state.questions.length;
+      elQuizScoreText.textContent = `Điểm: ${formatScore(state.score)}`;
+      if (!isInfRun) {
+        elProgressFill.style.width = `${((state.currentIndex + 1) / total) * 100}%`;
+      } else {
+        const acc = Math.min(100, (state.score / state.history.length) * 100);
+        elProgressFill.style.width = `${Math.max(12, acc)}%`;
+      }
+
+      elAnswerInput.disabled = true;
+      elBtnCheck.disabled = true;
+      elBtnSkip.disabled = true;
+
+      renderFeedback(item, result, isSkip, userAnswer);
+
+      if (result.status === "wrong") {
+        triggerErrorVibrate();
+        elWordCard.classList.remove("shake");
+        void elWordCard.offsetWidth;
+        elWordCard.classList.add("shake");
+      }
+
+      elBtnNext.textContent = (!isInfRun && state.currentIndex + 1 >= total)
+        ? "Xem kết quả →"
+        : "Câu tiếp theo →";
+      elNextWrap.classList.add("show");
+      elNextWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    /** Hiển thị thẻ phản hồi chi tiết sau mỗi câu */
+    function renderFeedback(item, result, isSkip, userAnswer) {
+      elFeedbackCard.className = `feedback-card show ${result.status}`;
+
+      if (result.status === "correct") {
+        elFeedbackCard.innerHTML = `
+          <div class="feedback-status">
+            <span>Chính xác! ✅</span>
+            <span>+1 điểm</span>
+          </div>
+          <div class="feedback-word-line">
+            <span class="feedback-word-text">${escapeHTML(item.word)}</span>
+            <span class="ipa-text">${escapeHTML(item.ipa)}</span>
+          </div>
+          <div class="pos-group">
+            ${renderPosAndMeaningsHTML(item)}
+          </div>
+          ${item.related ? `<div class="related-box"><strong>Từ liên quan:</strong> ${escapeHTML(item.related)}</div>` : ""}
+        `;
+      } else {
+        const title = result.status === "almost"
+          ? "Gần đúng! 🟠"
+          : (isSkip ? "Đã bỏ qua — Đáp án đúng" : "Chưa chính xác ❌");
+        const ptsText = result.status === "almost" ? "+0.5 điểm" : "+0 điểm";
+
+        elFeedbackCard.innerHTML = `
+          <div class="feedback-status">
+            <span>${title}</span>
+            <span>${ptsText}</span>
+          </div>
+          ${!isSkip ? `<div class="related-box" style="margin-top:0;margin-bottom:8px;"><strong>Bạn đã nhập:</strong> ${escapeHTML(userAnswer)}</div>` : ""}
+          <div class="feedback-word-line">
+            <span class="feedback-word-text">${escapeHTML(item.word)}</span>
+            <span class="ipa-text">${escapeHTML(item.ipa)}</span>
+          </div>
+          <div class="pos-group">
+            ${renderPosAndMeaningsHTML(item)}
+          </div>
+          <div class="example-box">
+            <div class="example-en">“${escapeHTML(item.example)}”</div>
+            <div class="example-vi">${escapeHTML(item.exampleVi)}</div>
+          </div>
+          ${item.related ? `<div class="related-box"><strong>Từ liên quan:</strong> ${escapeHTML(item.related)}</div>` : ""}
+        `;
+      }
+    }
+
+    /** Chuyển câu tiếp theo hoặc sang màn hình kết quả */
+    function goToNextQuestion() {
+      const isInfRun = !state.isReviewMode && state.mode === "infinite";
+      if (isInfRun || state.currentIndex + 1 < state.questions.length) {
+        state.currentIndex += 1;
+        renderCurrentQuestion();
+      } else {
+        renderResultScreen();
+      }
+    }
+
+    /** Hiển thị màn hình kết quả cuối lượt */
+    function renderResultScreen() {
+      const total = state.history.length;
+      const correctCount = state.history.filter(h => h.status === "correct").length;
+      const almostCount = state.history.filter(h => h.status === "almost").length;
+      const wrongCount = state.history.filter(h => h.status === "wrong").length;
+      const toReview = state.history.filter(h => h.status !== "correct");
+      const isInfRun = !state.isReviewMode && state.mode === "infinite";
+
+      document.getElementById("result-subtitle").textContent = state.isReviewMode
+        ? `Hoàn thành ôn tập trình độ ${state.level}`
+        : (isInfRun ? `Kết quả phiên Vô hạn ${state.level} (${total} từ)` : `Hoàn thành lượt kiểm tra trình độ ${state.level}`);
+      document.getElementById("result-score").textContent = `${formatScore(state.score)} / ${total}`;
+      document.getElementById("stat-correct").textContent = String(correctCount);
+      document.getElementById("stat-almost").textContent = String(almostCount);
+      document.getElementById("stat-wrong").textContent = String(wrongCount);
+
+      const elRecord = document.getElementById("result-record");
+      if (!state.isReviewMode && total > 0) {
+        if (isInfRun) {
+          const { isNewRecord, best } = saveInfiniteBest(state.level, state.score);
+          elRecord.style.display = "inline-block";
+          elRecord.textContent = isNewRecord
+            ? `🎉 Kỷ lục Vô hạn mới (${state.level}): ${formatScore(best)} điểm`
+            : `Kỷ lục Vô hạn ${state.level}: ${formatScore(best)} điểm`;
+        } else {
+          const { isNewRecord, best } = saveBestScore(state.level, state.score);
+          elRecord.style.display = "inline-block";
+          elRecord.textContent = isNewRecord
+            ? `🎉 Kỷ lục mới trình độ ${state.level}: ${formatScore(best)}/${total}`
+            : `Điểm cao nhất ${state.level}: ${formatScore(best)}/${total}`;
+        }
+      } else {
+        elRecord.style.display = "none";
+      }
+
+      const elBtnReviewWrong = document.getElementById("btn-review-wrong");
+      if (toReview.length > 0) {
+        elBtnReviewWrong.style.display = "inline-flex";
+        elBtnReviewWrong.textContent = `Ôn lại các từ cần cải thiện (${toReview.length} từ)`;
+      } else {
+        elBtnReviewWrong.style.display = "none";
+      }
+
+      const elReviewHeading = document.getElementById("review-heading");
+      const elReviewList = document.getElementById("review-list");
+
+      if (total === 0) {
+        elReviewHeading.textContent = "Bạn chưa trả lời câu nào trong phiên này.";
+        elReviewList.innerHTML = "";
+      } else if (toReview.length === 0) {
+        elReviewHeading.textContent = "Xuất sắc! Bạn trả lời đúng tất cả các từ 🎉";
+        elReviewList.innerHTML = "";
+      } else {
+        elReviewHeading.textContent = `Danh sách từ cần ôn lại (${toReview.length} từ)`;
+        elReviewList.innerHTML = toReview.map(entry => {
+          const w = entry.wordObj;
+          const statusLabel = entry.status === "almost" ? "Gần đúng" : "Sai";
+          return `
+            <div class="review-item ${entry.status}">
+              <div class="review-head">
+                <div>
+                  <span class="review-word">${escapeHTML(w.word)}</span>
+                  <span class="ipa-text">${escapeHTML(w.ipa)}</span>
+                </div>
+                <button class="mini-speak" type="button" data-speak="${escapeHTML(w.word)}" aria-label="Phát âm ${escapeHTML(w.word)}">🔊</button>
+              </div>
+              <div class="review-meaning">${renderPosAndMeaningsHTML(w)}</div>
+              <div class="review-user-ans">${statusLabel} • Câu trả lời của bạn: <strong>${escapeHTML(entry.userAnswer)}</strong></div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      renderHomeScreen();
+      showScreen("result");
+    }
+
+    /* =====================================================================
+       PHẦN 5: GẮN SỰ KIỆN TƯƠNG TÁC (EVENT LISTENERS)
+       ===================================================================== */
+
+    // Chuyển đổi chế độ Vô hạn / Lượt 10 từ
+    document.getElementById("mode-infinite").addEventListener("click", () => {
+      state.mode = "infinite";
+      renderHomeScreen();
+    });
+
+    document.getElementById("mode-10").addEventListener("click", () => {
+      state.mode = "standard10";
+      renderHomeScreen();
+    });
+
+    elChkAutoOnline.addEventListener("change", () => {
+      state.autoOnline = elChkAutoOnline.checked;
+      showToast(state.autoOnline ? "Đã bật tự động nạp từ mới trực tuyến." : "Đã chuyển sang dùng kho từ ngoại tuyến.");
+    });
+
+    // Chọn trình độ hoặc bấm nút nạp thêm từ mới 🌐 trên màn hình chính
+    elLevelGrid.addEventListener("click", async (e) => {
+      const fetchBtn = e.target.closest("[data-fetch-level]");
+      if (fetchBtn) {
+        const lvl = fetchBtn.getAttribute("data-fetch-level");
+        fetchBtn.disabled = true;
+        const lbl = fetchBtn.querySelector(".lbl");
+        if (lbl) lbl.textContent = "...";
+        showToast(`Đang tải thêm từ mới trình độ ${lvl}...`);
+        const added = await fetchMoreWordsOnline(lvl, 5);
+        renderHomeScreen();
+        if (added.length > 0) {
+          showToast(`Đã thêm ${added.length} từ mới vào kho ${lvl}!`);
+        } else {
+          showToast("Không thể tải thêm lúc này (kiểm tra mạng). Kho ngoại tuyến vẫn sẵn sàng!");
+        }
+        return;
+      }
+
+      const startBtn = e.target.closest("[data-start-level]");
+      if (!startBtn) return;
+      startSession(startBtn.getAttribute("data-start-level"));
+    });
+
+    // Modal thêm từ thủ công
+    const elModal = document.getElementById("add-word-modal");
+    document.getElementById("btn-open-add-word").addEventListener("click", () => {
+      elModal.classList.add("open");
+      elModal.setAttribute("aria-hidden", "false");
+      document.getElementById("aw-word").focus();
+    });
+
+    function closeAddModal() {
+      elModal.classList.remove("open");
+      elModal.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("btn-close-modal").addEventListener("click", closeAddModal);
+    elModal.addEventListener("click", (e) => {
+      if (e.target === elModal) closeAddModal();
+    });
+
+    document.getElementById("add-word-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const lvl = document.getElementById("aw-level").value;
+      const word = document.getElementById("aw-word").value.trim();
+      const meanings = document.getElementById("aw-meanings").value
+        .split(/[,;/]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      const type = document.getElementById("aw-type").value.trim() || "n";
+      const ipa = document.getElementById("aw-ipa").value.trim() || `/${word}/`;
+      const example = document.getElementById("aw-example").value.trim() || `Example with ${word}.`;
+      const exampleVi = document.getElementById("aw-example-vi").value.trim() || `Ví dụ với từ ${word}.`;
+
+      if (!word || meanings.length === 0) return;
+
+      const ok = saveExtraWord(lvl, { word, ipa, type, meanings, example, exampleVi, related: "" });
+      if (ok) {
+        showToast(`Đã thêm "${word}" vào kho ${lvl}!`);
+        e.target.reset();
+        closeAddModal();
+        renderHomeScreen();
+      } else {
+        showToast(`Từ "${word}" đã có sẵn trong kho ${lvl}.`);
+      }
+    });
+
+    // Quay lại màn hình chọn trình độ
+    document.getElementById("btn-back-home").addEventListener("click", () => {
+      renderHomeScreen();
+      showScreen("home");
+    });
+
+    // Nút Kết thúc sớm trong chế độ Vô hạn
+    elBtnFinishInfinite.addEventListener("click", () => {
+      renderResultScreen();
+    });
+
+    // Nút loa phát âm từ hiện tại
+    elBtnSpeak.addEventListener("click", () => {
+      const item = state.questions[state.currentIndex];
+      if (item) speakWord(item.word);
+    });
+
+    // Nút loa trên danh sách ôn tập ở màn hình kết quả
+    document.getElementById("review-list").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-speak]");
+      if (!btn) return;
+      speakWord(btn.getAttribute("data-speak"));
+    });
+
+    // Nộp bài bằng nút Kiểm tra hoặc nhấn Enter trong ô nhập
+    elAnswerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!state.answered) {
+        handleSubmission(false);
+      } else {
+        goToNextQuestion();
+      }
+    });
+
+    // Nút Bỏ qua / Không biết
+    elBtnSkip.addEventListener("click", () => handleSubmission(true));
+
+    // Nút Câu tiếp theo
+    elBtnNext.addEventListener("click", () => goToNextQuestion());
+
+    // Nhấn Enter sau khi đã chấm điểm để sang câu tiếp theo nhanh
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && elScreens.quiz.classList.contains("active") && state.answered) {
+        e.preventDefault();
+        goToNextQuestion();
+      }
+    });
+
+    // Đảm bảo ô nhập và nút Kiểm tra luôn nằm trong vùng nhìn thấy khi bàn phím điện thoại mở lên
+    elAnswerInput.addEventListener("focus", () => {
+      setTimeout(() => {
+        elAnswerForm.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 220);
+    });
+
+    // Các nút trên màn hình kết quả
+    document.getElementById("btn-review-wrong").addEventListener("click", () => {
+      const wrongWords = state.history.filter(h => h.status !== "correct").map(h => h.wordObj);
+      if (wrongWords.length > 0) {
+        startSession(state.level, wrongWords);
+      }
+    });
+
+    document.getElementById("btn-retry").addEventListener("click", () => {
+      startSession(state.level);
+    });
+
+    document.getElementById("btn-choose-level").addEventListener("click", () => {
+      renderHomeScreen();
+      showScreen("home");
+    });
+
+    // Khởi tạo ứng dụng
+    renderHomeScreen();
+  </script>
+</body>
+</html>
